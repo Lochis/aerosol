@@ -1,1 +1,1 @@
-# COMP229-Group2
+# aerosol.dev
