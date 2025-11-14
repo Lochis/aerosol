@@ -1,5 +1,5 @@
-import config from "./server/config/config.ts";
-import app from "./server/express.ts";
+import config from "./config/config.ts";
+import app from "./express.ts";
 import mongoose from "mongoose";
 mongoose.Promise = global.Promise;
 mongoose
