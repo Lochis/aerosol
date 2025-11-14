@@ -8,4 +8,5 @@ export default defineConfig({
     outDir: "../dist/client",
     emptyOutDir: true,
   },
+  cacheDir: "../node_modules/.vite",
 });
