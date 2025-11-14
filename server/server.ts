@@ -1,6 +1,7 @@
 import config from "./config/config.ts";
 import app from "./express.ts";
 import mongoose from "mongoose";
+import type { Request, Response } from "express";
 mongoose.Promise = global.Promise;
 mongoose
   .connect(config.mongoUri, {
