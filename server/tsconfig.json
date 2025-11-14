@@ -8,7 +8,6 @@
     "module": "preserve",
 
     "moduleResolution": "Node",
-    "outDir": "../dist/server",
 
     "allowImportingTsExtensions": true,
     "forceConsistentCasingInFileNames": true,

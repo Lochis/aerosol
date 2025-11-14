@@ -5,7 +5,7 @@
   "description": "",
   "scripts": {
     "dev": "nodemon server.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "bun build server.ts --outdir ../dist/server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
