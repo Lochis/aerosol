@@ -13,13 +13,13 @@
 2. Run client and server concurrently in development mode:
 
    ```sh
-   npm run dev --workspaces
+   npm run dev
    ```
 
-3. Build client and server concurrently:
+3. Build client and server to dist/:
 
    ```sh
-   npm run build --workspaces
+   npm run build
    ```
 
 ### With Bun
@@ -30,7 +30,7 @@
    bun install
    ```
 
-2. Run client and server concurrently in development mode:
+2. (BROKEN) Run client and server concurrently in development mode:
 
    ```sh
    bun dev --workspaces
@@ -43,7 +43,7 @@
    > in context of a workspace with `-F/--filter` or `--workspaces`. For now, you
    > can work around this by manually cd'ing into each project and running `bun dev`.
 
-3. Build client and server concurrently:
+3. (BROKEN) Build client and server concurrently:
 
    ```sh
    bun build --workspaces
