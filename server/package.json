@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "description": "",
-  "main": "/client/index.html",
   "scripts": {
-    "dev": "concurrently \"bun --cwd client dev\" \"nodemon server.ts\"",
-    "build": "bun --cwd client build && echo Client Build Complete && echo --- && npx tsc -p tsconfig.server.json && echo Server Build Complete",
+    "dev": "nodemon server.ts",
+    "build": "npx tsc -p tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
