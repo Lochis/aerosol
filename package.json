@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "concurrently \"npm run -w client dev\" \"npm run -w server dev\"",
-    "build": "concurrently \"npm run -w client build\" \"npm run -w server build\""
+    "build": "npm run -w client build && npm run -w server build"
   },
   "workspaces": [
     "client",
