@@ -5,7 +5,7 @@
     "target": "ES2022",
     "lib": ["ES2022"],
     "types": ["node"],
-    "module": "commonjs",
+    "module": "ES2022",
 
     "moduleResolution": "Node",
     "outDir": "dist",
