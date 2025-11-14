@@ -32,7 +32,7 @@ app.use(cookieParser())
 app.use(compress())
 app.use(helmet())
 app.use(cors())
-app.use((err: any, req: any, res: any, next: any) => {
+app.use((err: any, _req: any, res: any, _next: any) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).json({ "error": err.name + ": " + err.message })
   } else if (err) {
