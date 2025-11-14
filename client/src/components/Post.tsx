@@ -1,5 +1,5 @@
 import Avatar from "boring-avatars";
-import CommentIcon from "./icons/commentIcon";
+import CommentIcon from "./icons/CommentIcon";
 import RepostIcon from "./icons/RepostIcon";
 import HeartIcon from "./icons/HeartIcon";
 

@@ -6,6 +6,7 @@
   "main": "/client/index.html",
   "scripts": {
     "dev": "concurrently \"bun --cwd client dev\" \"nodemon server.ts\"",
+    "build": "bun --cwd client build && echo Client Build Complete && echo --- && npx tsc -p tsconfig.server.json && echo Server Build Complete",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

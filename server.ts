@@ -1,5 +1,6 @@
 import config from "./server/config/config.ts";
 import app from "./server/express.ts";
+import { Request, Response} from "express";
 import mongoose from "mongoose";
 mongoose.Promise = global.Promise;
 mongoose
@@ -16,10 +17,10 @@ mongoose
 mongoose.connection.on("error", () => {
   throw new Error(`unable to connect to database: ${config.mongoUri}`);
 });
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Aerosol API" });
 });
-app.listen(config.port, (err) => {
+app.listen(config.port, (err: any) => {
   if (err) {
     console.log(err);
   }
