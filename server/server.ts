@@ -18,7 +18,7 @@ mongoose.connection.on("error", () => {
   throw new Error(`unable to connect to database: ${config.mongoUri}`);
 });
 app.get("/", (_req: Request, res: Response) => {
-  res.json({ message: "Aerosol API" });
+  res.json({ message: "Aerosol API v2" });
 });
 app.listen(config.port, (err: any) => {
   if (err) {
