@@ -1,5 +1,6 @@
 {
   "name": "aerosol",
+  "private": true,
   "version": "1.0.0",
   "scripts": {
     "dev": "concurrently \"bun --cwd client dev\" \"bun --cwd server dev\"",
