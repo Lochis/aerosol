@@ -4,7 +4,7 @@
   "type": "module",
   "description": "",
   "scripts": {
-    "dev": "nodemon server.ts",
+    "dev": "bun --hot server.ts",
     "build": "bun build server.ts --outdir ../dist/server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
