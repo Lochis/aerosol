@@ -1,16 +1,15 @@
 import User from '../models/user.model.js'
 import jwt from 'jsonwebtoken'
 import { expressjwt } from "express-jwt";
-import errorHandler from './error.controller.js'
 
-import config from './../../config/config.js';
+import config from '../config/config.ts';
 
 const me = async (req, res) => {
     try {
         const userId = req.auth.sub;
         // if no userId in token, return invalid token error
         if (!userId) {
-            return res.status(401).json({"code":"INVALID_TOKEN"});
+            return res.status(401).json({ "code": "INVALID_TOKEN" });
         }
 
         const user = await User.findById(userId).select('_id email name createdAt');
@@ -21,12 +20,14 @@ const me = async (req, res) => {
                     "id": user._id,
                     "email": user.email,
                     "name": user.name,
+                    "display_name": user.display_name,
+                    "avatar_url": user.avatar_url.toString('base64'),
                     "createdAt": user.createdAt
                 },
             }
         });
     } catch (err) {
-        return res.status(401).json({"code":"INVALID_TOKEN"});
+        return res.status(401).json({ "code": "INVALID_TOKEN" });
     }
 }
 
@@ -64,13 +65,13 @@ const signin = async (req, res) => {
         console.log(err)
         return res.status(400).json({
             "status": "error",
-            "error": { "message": errorHandler.getErrorMessage(err) }
+            "error": { "message": err }
         });
     }
 }
 
 const signup = async (req, res) => {
-    console.log("signup req.body", req.body);
+
     try {
         // normalize email and name to lowercase
         const email = req.body.email.trim().toLowerCase();
@@ -91,8 +92,21 @@ const signup = async (req, res) => {
         req.body.email = email;
         req.body.name = name;
 
-        const user = new User(req.body)
-        await user.save()
+        const user = new User(req.body);
+        console.log("User object before save:", user);
+
+        // Validate explicitly to get validation errors before DB write
+        await user.validate().catch(validationErr => {
+            console.error("Validation errors:", validationErr);
+            throw { type: "VALIDATION", details: validationErr.errors };
+        });
+
+        // actual save
+        console.log("Attempting to save user to DB...");
+        await user.save();
+        console.log("User saved successfully:", user._id);
+
+
         return res.status(201).json({
             "status": "ok",
             "data": { userId: user._id }
@@ -100,7 +114,7 @@ const signup = async (req, res) => {
     } catch (err) {
         return res.status(400).json({
             "status": "error",
-            "error": { "message": errorHandler.getErrorMessage(err) }
+            "error": { "message": err }
         })
     }
 }

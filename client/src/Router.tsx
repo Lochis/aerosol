@@ -2,6 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import Auth from "./pages/Auth";
+import AuthLayout from "./AuthLayout";
 
 const router = createBrowserRouter([
     {
@@ -10,7 +12,6 @@ const router = createBrowserRouter([
         children: [
             { index: true, element: <Home /> },
             { path: "/profile", element: <Profile /> },
-            //{ path: "/signup", element: <SignUp /> },
             //{
             //  element: <ProtectedRoute />,
             // children: [
@@ -18,6 +19,13 @@ const router = createBrowserRouter([
             //   { path: "/profile", element: <Profile /> },
         ],
     },
+    {
+    path: "/",
+    element: <AuthLayout />, // no Navbar
+    children: [
+      { path: "auth", element: <Auth /> },
+    ],
+  },
     //],
     //},
 ]);
