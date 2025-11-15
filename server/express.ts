@@ -19,7 +19,8 @@ app.use(cors(corsOptions));
 
 const CURRENT_WORKING_DIR = process.cwd()
 
-app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
+const CLIENT_DIST = path.join(CURRENT_WORKING_DIR, 'dist', 'client') // matches client vite.config.ts outDir: "../dist/client"
+app.use(express.static(CLIENT_DIST))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
