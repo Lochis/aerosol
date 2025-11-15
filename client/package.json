@@ -4,10 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "bun --hot index.html",
+    "build": "bun run build.ts",
+    "lint": "eslint ."
   },
   "dependencies": {
     "boring-avatars": "^2.0.4",
