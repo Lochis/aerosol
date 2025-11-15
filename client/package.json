@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
+    "axios": "^1.13.2",
     "boring-avatars": "^2.0.4",
     "install": "^0.13.0",
     "npm": "^11.6.2",

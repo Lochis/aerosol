@@ -1,13 +1,7 @@
 import mongoose from 'mongoose'
-//const mongoose = require('mongoose');
 import bcrypt from 'bcrypt';
 
 const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    trim: true,
-    required: 'Name is required'
-  },
   email: {
     type: String,
     trim: true,
@@ -15,15 +9,28 @@ const UserSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, 'Please fill a valid email address'],
     required: 'Email is required'
   },
-  passwordHash: {
+  name: {
     type: String,
-    required: 'Password is required'
+    trim: true,
+    required: 'Name is required'
+  },
+  tag: {
+    type: String,
+    trim: true,
+    required: 'Tag is required'
   },
   createdAt: {
     type: Date,
     default: Date.now
   },
-  salt: String
+  avatar_url: {
+    type: Buffer,
+    trim: true,
+  },
+  passwordHash: {
+    type: String,
+    required: 'Password is required'
+  },
 });
 
 UserSchema.virtual('password')
