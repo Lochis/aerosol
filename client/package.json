@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun --hot index.html",
-    "build": "bun run build.ts",
+    "build": "bun build index.html --outdir ../dist/client",
     "lint": "eslint ."
   },
   "dependencies": {
