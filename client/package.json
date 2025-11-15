@@ -22,6 +22,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "autoprefixer": "^10.4.22",
+    "bun-plugin-tailwind": "^0.1.2",
     "daisyui": "^5.5.3",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
