@@ -14,5 +14,4 @@
     "resolveJsonModule": true,
     "sourceMap": true,
   },
-  "include": ["server.ts", "**/*.ts"]
 }
