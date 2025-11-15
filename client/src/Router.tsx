@@ -20,10 +20,10 @@ const router = createBrowserRouter([
         ],
     },
     {
-    path: "/",
+    path: "/auth",
     element: <AuthLayout />, // no Navbar
     children: [
-      { path: "auth", element: <Auth /> },
+      { index: true, element: <Auth /> },
     ],
   },
     //],
