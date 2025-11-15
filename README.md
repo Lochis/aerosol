@@ -2,35 +2,15 @@
 
 ## Usage
 
-### With Node.js
+1. Install Bun: https://bun.sh/
 
-1. Install dependencies:
-
-   ```sh
-   npm install
-   ```
-
-2. Run client and server concurrently in development mode:
-
-   ```sh
-   npm run dev
-   ```
-
-3. Build client and server to dist/:
-
-   ```sh
-   npm run build
-   ```
-
-### With Bun
-
-1. Install dependencies:
+2. Install dependencies using Bun:
 
    ```sh
    bun install
    ```
 
-2. (BROKEN) Run client and server concurrently in development mode:
+3. (BROKEN) Run client and server concurrently in development mode:
 
    ```sh
    bun dev --workspaces
@@ -43,7 +23,7 @@
    > in context of a workspace with `-F/--filter` or `--workspaces`. For now, you
    > can work around this by manually cd'ing into each project and running `bun dev`.
 
-3. (BROKEN) Build client and server concurrently:
+4. (BROKEN) Build client and server concurrently:
 
    ```sh
    bun build --workspaces
