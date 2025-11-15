@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun --hot --port 3001 index.html",
-    "build": "bun build index.html --outdir ../dist/client",
+    "dev": "bun --hot --port 3001 src/index.html",
+    "build": "bun run build.ts --outdir ../dist/client",
     "lint": "eslint ."
   },
   "dependencies": {
