@@ -7,7 +7,8 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"bun --cwd client dev\" \"bun --cwd server dev\"",
-    "build": "bun --cwd client build && bun --cwd server build"
+    "build": "bun --cwd client build && bun --cwd server build",
+    "start": "bun run build && concurrently \"bun --port 3001 dist/client/index.html\" \"bun dist/server/server.js\""
   },
   "workspaces": [
     "client",
