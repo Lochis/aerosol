@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun --hot index.html",
+    "dev": "bun --hot --port 3001 index.html",
     "build": "bun build index.html --outdir ../dist/client",
     "lint": "eslint ."
   },
