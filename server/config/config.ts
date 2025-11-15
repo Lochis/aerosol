@@ -1,5 +1,3 @@
-import 'dotenv/config';
-
 interface Config {
     env: string;
     jwtSecret: string;

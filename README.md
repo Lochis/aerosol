@@ -2,49 +2,31 @@
 
 ## Usage
 
-### With Node.js
+1. Install Bun: https://bun.sh/
 
-1. Install dependencies:
-
-   ```sh
-   npm install
-   ```
-
-2. Run client and server concurrently in development mode:
-
-   ```sh
-   npm run dev
-   ```
-
-3. Build client and server to dist/:
-
-   ```sh
-   npm run build
-   ```
-
-### With Bun
-
-1. Install dependencies:
+2. Install dependencies using Bun:
 
    ```sh
    bun install
    ```
 
-2. (BROKEN) Run client and server concurrently in development mode:
+3. In the `server/` directory, create a `.env` file and fill out the following:
 
-   ```sh
-   bun dev --workspaces
+   ```env
+   MONGODB_URI=mongodb+srv://user:password@example.com/Aerosol?appName=Default
+   JWT_SECRET=
+   NODE_ENV=development
+   PORT=3000
    ```
 
-   > [!WARNING]
-   >
-   > Due to oven-sh/bun [#8788](https://github.com/oven-sh/bun/issues/8788),
-   > the client and server cannot be interrupted with Ctrl+C when running scripts
-   > in context of a workspace with `-F/--filter` or `--workspaces`. For now, you
-   > can work around this by manually cd'ing into each project and running `bun dev`.
-
-3. (BROKEN) Build client and server concurrently:
+4. Run client and server in development mode:
 
    ```sh
-   bun build --workspaces
+   bun dev
+   ```
+
+5. Build the client and server files (note the extra `run` keyword):
+
+   ```sh
+   bun run build
    ```
