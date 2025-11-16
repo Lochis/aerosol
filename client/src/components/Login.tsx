@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, redirect } from "react-router";
+import {useNavigate } from "react-router";
 import axios from "axios";
 
 interface AuthProps {
@@ -10,7 +10,7 @@ interface AuthProps {
 export default function Login({ handleShowPassword, showPassword }: AuthProps) {
     const [toastVisible, setToastVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const [redirectToHome, setRedirectToHome] = useState(false);
+    const navigate = useNavigate();
 
     function showToast() {
         setToastVisible(true);
@@ -28,13 +28,13 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
             email: formData.get("email"),
             password: formData.get("password"),
         };
-        console.log(data);
 
         try {
             const response = await axios.post("http://localhost:3000/api/login", data, {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Login successful:", response.data);
+            navigate("/");
 
             
         } catch (error) {
@@ -51,8 +51,6 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
 
     return (
         <>
-            {redirectToHome && <Navigate to="/" replace={true} />}
-
             <div className="toast toast-top toast-center" hidden={!toastVisible}>
                 <div className="alert alert-danger">
                     <span>{errorMessage}</span>
