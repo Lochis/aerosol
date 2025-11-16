@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { authDelete, authGet, authPut, clearToken } from "../lib/auth";
+import { authDelete, authGet, authPut, clearToken, isAuthenticated } from "../lib/auth";
 import type { User } from "../types/user.types";
 import { useNavigate } from "react-router";
 
@@ -16,7 +16,9 @@ export default function Profile() {
 
             setProfile(response.data.data.user);
         }
-        fetchProfile();
+        if (isAuthenticated()) {
+            fetchProfile();
+        }
     }, []);
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {

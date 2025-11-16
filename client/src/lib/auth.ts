@@ -10,6 +10,11 @@ export const getToken = () => localStorage.getItem(accessTokenKey);
 
 export const clearToken = () => localStorage.removeItem(accessTokenKey);
 
+export const isAuthenticated = () => {
+  const token = getToken();
+  return !!token;
+};
+
 export async function authFetch(input: string, init: any) {
   const token = getToken();
 

@@ -5,9 +5,10 @@ import { useState } from "react";
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
     showPassword: boolean;
+    setActiveTab: (tab: string) => void;
 }
 
-export default function SignUp({ handleShowPassword, showPassword }: AuthProps) {
+export default function SignUp({ handleShowPassword, showPassword, setActiveTab }: AuthProps) {
     const [toastVisible, setToastVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -34,6 +35,7 @@ export default function SignUp({ handleShowPassword, showPassword }: AuthProps) 
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Sign up successful:", response.data);
+            setActiveTab("login");
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error("Sign up failed:", error.response?.data);

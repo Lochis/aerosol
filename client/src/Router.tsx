@@ -4,14 +4,21 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import AuthLayout from "./AuthLayout";
+import ProtectedRoute from "./ProtectedRoute";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Layout />,
+        element: <Layout/>,
         children: [
+          {
+            element: <ProtectedRoute/>,
+            children: [
             { index: true, element: <Home /> },
             { path: "/profile", element: <Profile /> },
+            ]
+          }
+
             //{
             //  element: <ProtectedRoute />,
             // children: [
