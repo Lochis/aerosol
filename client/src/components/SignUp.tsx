@@ -30,7 +30,7 @@ export default function SignUp({ handleShowPassword, showPassword }: AuthProps) 
         };
 
         try {
-            const response = await axios.post("/api/signup", data, {
+            const response = await axios.post("http://localhost:3000/api/signup", data, {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Sign up successful:", response.data);
