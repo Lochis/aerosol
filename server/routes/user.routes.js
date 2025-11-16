@@ -11,7 +11,10 @@ const router = express.Router()
     router.route('/api/users/:userId').put(userCtrl.update)
     router.route('/api/users/:userId').delete(userCtrl.remove)*/
 
-    router.route('/me').get(authCtrl.requireSignin, userCtrl.me)
+    router.route('/me')
+        .get(authCtrl.requireSignin, userCtrl.me)
+        .put(authCtrl.requireSignin, userCtrl.update)
+        .delete(authCtrl.requireSignin, userCtrl.remove)
 
     export default router
 

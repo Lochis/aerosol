@@ -76,15 +76,23 @@ const read = (req, res) => {
     req.profile.salt = undefined
     return res.json(req.profile)
 }
+
 const update = async (req, res) => {
+    {/* TODO returns 400 error and doesn't update user info */}
     try {
+        let userId = req.auth.sub;    
+        if (!userId) {
+            return res.status(403).json({
+                error: "Unauthorized"
+            });
+        }
+       
         let user = req.profile
         user = extend(user, req.body)
-        user.updated = Date.now()
         await user.save()
-        user.hashed_password = undefined
-        user.salt = undefined
+        console.log("user");
         res.json(user)
+
     } catch (err) {
         return res.status(400).json({
             error: err

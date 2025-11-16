@@ -29,14 +29,16 @@ app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/api', userRoutes)
-app.use('/api', authRoutes)
-
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(compress())
 app.use(helmet())
+
+
+app.use('/api', userRoutes)
+app.use('/api', authRoutes)
+
 app.use((err: any, _req: any, res: any, _next: any) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).json({ "error": err.name + ": " + err.message })
