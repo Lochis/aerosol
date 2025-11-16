@@ -16,7 +16,6 @@
    MONGODB_URI=mongodb+srv://user:password@example.com/Aerosol?appName=Default
    JWT_SECRET=
    NODE_ENV=development
-   PORT=3000
    ```
 
 4. Run client and server in development mode:
