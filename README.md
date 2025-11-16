@@ -10,7 +10,7 @@
    bun install
    ```
 
-3. In the `server/` directory, create a `.env` file and fill out the following:
+3. Create a `.env` file and fill out the following:
 
    ```env
    MONGODB_URI=mongodb+srv://user:password@example.com/Aerosol?appName=Default
