@@ -4,33 +4,6 @@ import { expressjwt } from "express-jwt";
 
 import config from '../config/config.ts';
 
-const me = async (req, res) => {
-    try {
-        const userId = req.auth.sub;
-        // if no userId in token, return invalid token error
-        if (!userId) {
-            return res.status(401).json({ "code": "INVALID_TOKEN" });
-        }
-
-        const user = await User.findById(userId).select('_id email name createdAt');
-        return res.json({
-            "status": "ok",
-            "data": {
-                "user": {
-                    "id": user._id,
-                    "email": user.email,
-                    "name": user.name,
-                    "display_name": user.display_name,
-                    "avatar_url": user.avatar_url.toString('base64'),
-                    "createdAt": user.createdAt
-                },
-            }
-        });
-    } catch (err) {
-        return res.status(401).json({ "code": "INVALID_TOKEN" });
-    }
-}
-
 const login = async (req, res) => {
     console.log("Login request received:", req.body);
     try {
@@ -138,5 +111,5 @@ const hasAuthorization = (req, res, next) => {
     next()
 }
 
-export default { login, signup, me, requireSignin, hasAuthorization }
+export default { login, signup, requireSignin, hasAuthorization }
 

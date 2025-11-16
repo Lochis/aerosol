@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser'
 import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
-//import userRoutes from './routes/user.routes.js'
+import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.ts'
 
 import path from 'path'
@@ -29,7 +29,7 @@ app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-//app.use('/', userRoutes)
+app.use('/', userRoutes)
 app.use('/api', authRoutes)
 
 app.use(bodyParser.json())

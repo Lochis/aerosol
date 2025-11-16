@@ -1,6 +1,33 @@
 import User from '../models/user.model.js'
 import extend from 'lodash/extend.js'
-import errorHandler from './error.controller.js'
+
+
+const me = async (req, res) => {
+    try {
+        const userId = req.auth.sub;
+        // if no userId in token, return invalid token error
+        if (!userId) {
+            return res.status(401).json({ "code": "INVALID_TOKEN" });
+        }
+
+        const user = await User.findById(userId).select('_id email name createdAt');
+        return res.json({
+            "status": "ok",
+            "data": {
+                "user": {
+                    "id": user._id,
+                    "email": user.email,
+                    "name": user.name,
+                    "display_name": user.display_name,
+                    "avatar_url": user.avatar_url.toString('base64'),
+                    "createdAt": user.createdAt
+                },
+            }
+        });
+    } catch (err) {
+        return res.status(401).json({ "code": "INVALID_TOKEN" });
+    }
+}
 
 const create = async (req, res) => {
     const user = new User(req.body)
@@ -11,7 +38,7 @@ const create = async (req, res) => {
         })
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         })
     }
 }
@@ -21,7 +48,7 @@ const list = async (req, res) => {
         res.json(users)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         })
     }
 }
@@ -56,7 +83,7 @@ const update = async (req, res) => {
         res.json(user)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         })
     }
 }
@@ -69,7 +96,7 @@ const remove = async (req, res) => {
         res.json(deletedUser)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         })
     }
 }
@@ -89,10 +116,10 @@ const removeMany = async (req, res) => {
         });
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         });
     }
 };
-export default { create, userByID, read, list, remove, removeMany, update }
+export default { create, me, userByID, read, list, remove, removeMany, update }
 
 
