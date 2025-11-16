@@ -19,7 +19,14 @@ export async function createPost(req: JWTRequest, res: Response) {
     const user = await User.findById(req.auth.sub)
     if (!user) return res.status(404).json({ error: "User not found" })
 
-    return res.json({}) // TODO
+    const { content } = req.body
+    if (!content) return res.status(400).json({ error: "content is required" })
+
+    const post = await Post.create({
+        author: user._id,
+        content: content,
+    })
+    return res.json(post)
 }
 
 export async function editPost(req: JWTRequest, res: Response) {
