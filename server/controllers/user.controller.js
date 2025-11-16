@@ -1,6 +1,37 @@
 import User from '../models/user.model.js'
 import extend from 'lodash/extend.js'
-import errorHandler from './error.controller.js'
+
+
+const me = async (req, res) => {
+
+    try {
+        console.log(req.auth.sub)
+        const userId = req.auth?.sub;
+
+        // if no userId in token, return invalid token error
+        if (!userId) {
+            return res.status(401).json({ "code": "INVALID_TOKEN" });
+        }
+
+        const user = await User.findById(userId).select('_id email name tag avatar_url createdAt');
+        console.log("User found for me:", user);
+        return res.json({
+            "status": "ok",
+            "data": {
+                "user": {
+                    "id": user._id,
+                    "email": user.email,
+                    "name": user.name,
+                    "tag": user.tag,
+                    "avatar_url": user.avatar_url,
+                    "createdAt": user.createdAt
+                },
+            }
+        });
+    } catch (err) {
+        return res.status(401).json({ "code": "INVALID_TOKEN" });
+    }
+}
 
 const create = async (req, res) => {
     const user = new User(req.body)
@@ -11,7 +42,7 @@ const create = async (req, res) => {
         })
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         })
     }
 }
@@ -21,7 +52,7 @@ const list = async (req, res) => {
         res.json(users)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         })
     }
 }
@@ -45,31 +76,40 @@ const read = (req, res) => {
     req.profile.salt = undefined
     return res.json(req.profile)
 }
+
 const update = async (req, res) => {
     try {
-        let user = req.profile
+        let userId = req.auth.sub;
+        if (!userId) {
+            return res.status(403).json({
+                error: "Unauthorized"
+            });
+        }
+
+        let user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ error: "USER_NOT_FOUND" })
+        }
+
         user = extend(user, req.body)
-        user.updated = Date.now()
         await user.save()
-        user.hashed_password = undefined
-        user.salt = undefined
         res.json(user)
+
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         })
     }
 }
 const remove = async (req, res) => {
+    console.log("Delete request received for user:", req.auth.sub);
     try {
-        let user = req.profile
+         let user = await User.findById(req.auth.sub);
         let deletedUser = await user.deleteOne()
-        deletedUser.hashed_password = undefined
-        deletedUser.salt = undefined
         res.json(deletedUser)
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         })
     }
 }
@@ -89,10 +129,10 @@ const removeMany = async (req, res) => {
         });
     } catch (err) {
         return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
+            error: err
         });
     }
 };
-export default { create, userByID, read, list, remove, removeMany, update }
+export default { create, me, userByID, read, list, remove, removeMany, update }
 
 

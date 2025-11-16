@@ -6,8 +6,8 @@ export default function RepostIcon() {
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                             className="w-5 h-5"
                         >
                             <polyline points="17 2 21 6 17 10"></polyline>

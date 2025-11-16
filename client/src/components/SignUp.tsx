@@ -5,9 +5,10 @@ import { useState } from "react";
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
     showPassword: boolean;
+    setActiveTab: (tab: string) => void;
 }
 
-export default function SignUp({ handleShowPassword, showPassword }: AuthProps) {
+export default function SignUp({ handleShowPassword, showPassword, setActiveTab }: AuthProps) {
     const [toastVisible, setToastVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -30,10 +31,11 @@ export default function SignUp({ handleShowPassword, showPassword }: AuthProps) 
         };
 
         try {
-            const response = await axios.post("/api/signup", data, {
+            const response = await axios.post("http://localhost:3000/api/signup", data, {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Sign up successful:", response.data);
+            setActiveTab("login");
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error("Sign up failed:", error.response?.data);
@@ -75,7 +77,7 @@ export default function SignUp({ handleShowPassword, showPassword }: AuthProps) 
                     </div>
 
                 </fieldset>
-                <button className="btn btn-primary w-full max-w-md">Create Account</button>
+                <button type="submit" className="btn btn-primary w-full max-w-md">Create Account</button>
             </form>
         </>
     )

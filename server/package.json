@@ -5,7 +5,7 @@
   "type": "module",
   "description": "",
   "scripts": {
-    "dev": "bun --hot --env-file ../.env server.ts",
+    "dev": "bun --hot --env-file ../.env --port 3000 server.ts",
     "build": "bun build server.ts --outdir ../dist/server --target node --production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,6 +19,7 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "lodash": "^4.17.21",
     "mongodb": "^7.0.0",
     "mongoose": "^8.19.3"
   },
