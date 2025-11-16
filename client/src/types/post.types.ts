@@ -3,7 +3,7 @@ export interface Post {
     author: {
         name: string;
         tag: string;
-        avatar_url: Buffer;
+        avatar_url?: Buffer;
     };
     content: string;
     createdAt: string;

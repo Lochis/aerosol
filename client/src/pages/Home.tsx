@@ -17,13 +17,11 @@ export default function Home() {
         try {
 
             // TODO: Test once backend is ready
-            const response = await axios.get("http://localhost:3000/api/posts", {
+            const response = await axios.get("http://localhost:3000/api/posts?before=" + (date ? date.toISOString() : ""), {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Posts fetched successfully:", response.data);
-
-            // TODO: Test once backend is ready
-            //setPosts(response.data.data.posts);
+            setPosts(response.data);
 
         } catch (error) {
             console.error("Error fetching posts:", error);
@@ -32,18 +30,21 @@ export default function Home() {
 
     // Get posts on component mount
     useEffect(() => {
-        getPosts();
+        async function fetchPosts() {
+            await getPosts();
+        }
+        fetchPosts();
     }, []);
 
 
     async function createPost() {
         try {
-            alert("Creating post: " + postContent);
-            const response = await authPost("http://localhost:3000/api/posts", data, {
+            const response = await authPost("http://localhost:3000/api/posts", { content: postContent }, {
                 headers: { "Content-Type": "application/json" },
             });
 
             console.log("Post creation successful:", response.data);
+            await getPosts();
         } catch (error) {
             console.error("Error creating post:", error);
         }
@@ -70,7 +71,7 @@ export default function Home() {
 
             <div className="py-2">
                 {posts.map((post) => (
-                    <Post key={post.id} author={post.author} content={post.content} />
+                    <Post key={post.id} post={post} />
                 ))}
             </div>
         </div>
