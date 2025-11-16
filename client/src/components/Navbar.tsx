@@ -1,6 +1,14 @@
 import Avatar from "boring-avatars";
+import { clearToken } from "../lib/auth";
+import { useNavigate } from "react-router";
 
 export default function NavBar() {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        clearToken();
+        navigate("/auth");
+    }
+
     return (
         <div className="navbar bg-base-100 shadow-sm">
             <div className="mx-auto flex w-full">
@@ -33,7 +41,7 @@ export default function NavBar() {
                                 </a>
                             </li>
                             <li><a>Settings</a></li>
-                            <li><a>Logout</a></li>
+                            <li><a onClick={handleLogout}>Logout</a></li>
                         </ul>
                     </div>
             </div>
