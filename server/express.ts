@@ -29,7 +29,7 @@ app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/', userRoutes)
+app.use('/api', userRoutes)
 app.use('/api', authRoutes)
 
 app.use(bodyParser.json())

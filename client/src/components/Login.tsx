@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {useNavigate } from "react-router";
 import axios from "axios";
+import { saveToken } from "../lib/auth";
 
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -34,6 +35,7 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Login successful:", response.data);
+            saveToken(response.data.accessToken);
             navigate("/");
 
             

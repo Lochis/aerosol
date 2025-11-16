@@ -3,14 +3,18 @@ import extend from 'lodash/extend.js'
 
 
 const me = async (req, res) => {
+   
     try {
-        const userId = req.auth.sub;
+        console.log(req.auth.sub)
+        const userId = req.auth?.sub;
+            
         // if no userId in token, return invalid token error
         if (!userId) {
             return res.status(401).json({ "code": "INVALID_TOKEN" });
         }
-
-        const user = await User.findById(userId).select('_id email name createdAt');
+        
+        const user = await User.findById(userId).select('_id email name tag avatar_url createdAt');
+        console.log("User found for me:", user);
         return res.json({
             "status": "ok",
             "data": {
@@ -18,8 +22,8 @@ const me = async (req, res) => {
                     "id": user._id,
                     "email": user.email,
                     "name": user.name,
-                    "display_name": user.display_name,
-                    "avatar_url": user.avatar_url.toString('base64'),
+                    "tag": user.tag,
+                    "avatar_url": user.avatar_url,
                     "createdAt": user.createdAt
                 },
             }
