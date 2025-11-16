@@ -5,7 +5,7 @@ import { createPost, deletePost, editPost, getPosts } from '../controllers/post.
 const router = express.Router()
 router.get('/posts', getPosts)
 router.post('/posts', authCtrl.requireSignin, createPost)
-router.put('/posts/:id', authCtrl.requireSignin, editPost)
+router.patch('/posts/:id', authCtrl.requireSignin, editPost)
 router.delete('/posts/:id', authCtrl.requireSignin, deletePost)
 
 export default router

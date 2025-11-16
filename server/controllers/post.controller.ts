@@ -43,8 +43,11 @@ export async function editPost(req: JWTRequest, res: Response) {
 
     if (post.author._id !== user._id) return res.status(403).json({ error: "Not authorized" })
 
-    // TODO
-    return res.status(204)
+    const { content } = req.body
+    if (content) post.content = content
+
+    await post.save()
+    return res.json(post)
 }
 
 export async function deletePost(req: JWTRequest, res: Response) {
