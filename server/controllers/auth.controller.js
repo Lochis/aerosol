@@ -49,7 +49,6 @@ const signup = async (req, res) => {
     try {
         // normalize email and name to lowercase
         const email = req.body.email.trim().toLowerCase();
-        const name = req.body.name.trim().toLowerCase();
 
         // check if user with the same email already exists
         const existingUser = await User.findOne({ email: email });
@@ -64,7 +63,6 @@ const signup = async (req, res) => {
         }
 
         req.body.email = email;
-        req.body.name = name;
 
         const user = new User(req.body);
         console.log("User object before save:", user);
