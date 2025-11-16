@@ -11,10 +11,16 @@ import path from 'path'
 const app = express()
 
 const corsOptions = {
-  origin: "*",
+  // set precise origin or reflect the request origin:
+  origin: (origin: any, callback: any) => {
+    // allow same-origin and local dev
+    callback(null, origin ?? 'http://localhost:3000')
+  },
   credentials: true,
-  optionSuccessStatus: 200,
-};
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200
+}
 app.use(cors(corsOptions));
 
 const CURRENT_WORKING_DIR = process.cwd()
@@ -31,7 +37,6 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(compress())
 app.use(helmet())
-app.use(cors())
 app.use((err: any, _req: any, res: any, _next: any) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).json({ "error": err.name + ": " + err.message })

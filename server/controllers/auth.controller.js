@@ -31,7 +31,8 @@ const me = async (req, res) => {
     }
 }
 
-const signin = async (req, res) => {
+const login = async (req, res) => {
+    console.log("Login request received:", req.body);
     try {
         let user = await User.findOne({ "email": req.body.email })
         if (!user) {
@@ -137,5 +138,5 @@ const hasAuthorization = (req, res, next) => {
     next()
 }
 
-export default { signin, signup, me, requireSignin, hasAuthorization }
+export default { login, signup, me, requireSignin, hasAuthorization }
 

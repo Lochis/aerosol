@@ -75,7 +75,7 @@ export default function SignUp({ handleShowPassword, showPassword }: AuthProps) 
                     </div>
 
                 </fieldset>
-                <button className="btn btn-primary w-full max-w-md">Create Account</button>
+                <button type="submit" className="btn btn-primary w-full max-w-md">Create Account</button>
             </form>
         </>
     )
