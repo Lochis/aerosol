@@ -13,8 +13,8 @@ export default function Profile() {
             const response = await authGet("http://localhost:3000/api/me", {
                 headers: { "Content-Type": "application/json" },
             });
-
-            setProfile(response.data.data.user);
+            console.log("Profile fetched successfully:", response.data);
+            setProfile(response.data.user);
         }
         if (isAuthenticated()) {
             fetchProfile();

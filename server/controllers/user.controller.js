@@ -16,8 +16,6 @@ const me = async (req, res) => {
         const user = await User.findById(userId).select('_id email name tag avatar_url createdAt');
         console.log("User found for me:", user);
         return res.json({
-            "status": "ok",
-            "data": {
                 "user": {
                     "id": user._id,
                     "email": user.email,
@@ -26,7 +24,6 @@ const me = async (req, res) => {
                     "avatar_url": user.avatar_url,
                     "createdAt": user.createdAt
                 },
-            }
         });
     } catch (err) {
         return res.status(401).json({ "code": "INVALID_TOKEN" });

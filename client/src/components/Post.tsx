@@ -3,8 +3,11 @@ import CommentIcon from "./icons/CommentIcon";
 import RepostIcon from "./icons/RepostIcon";
 import HeartIcon from "./icons/HeartIcon";
 import type { Post as PostType } from "../types/post.types";
+import { useState } from "react";
 
 export default function Post({ post }: { post: PostType }) {
+    const [edit, setEdit] = useState(false);
+
     return (
         <div className="card bg-base-100 shadow-md border border-base-350 max-w-xl mx-auto mb-4">
             <div className="card-body p-4">
@@ -20,9 +23,13 @@ export default function Post({ post }: { post: PostType }) {
                             />
                         </div>
                     </div>
-                    <div>
-                        <h2 className="font-semibold text-sm">{post.author.name}</h2>
-                        <p className="text-xs opacity-60">@{post.author.tag} · {new Date(post.createdAt).toLocaleString()}</p>
+                    <div className="flex flex-row w-full justify-between">
+                        <div>
+                            <h2 className="font-semibold text-sm">{post.author.name}</h2>
+                            <p className="text-xs opacity-60">@{post.author.tag} · {new Date(post.createdAt).toLocaleString()}</p>
+                        </div>
+                        <button className="btn btn-ghost btn-sm btn-outline float-end">Edit</button>
+
                     </div>
                 </div>
 
@@ -40,7 +47,7 @@ export default function Post({ post }: { post: PostType }) {
                     />
                 </div>
                 )}*/}
-                
+
 
                 {/* Interaction buttons */}
                 <div className="flex justify-between text-sm opacity-70">
