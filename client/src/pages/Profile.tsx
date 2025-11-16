@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { authDelete, authGet, authPut } from "../lib/auth";
+import { authDelete, authGet, authPut, clearToken } from "../lib/auth";
 import type { User } from "../types/user.types";
+import { useNavigate } from "react-router";
 
 export default function Profile() {
 
     const [profile, setProfile] = useState<User>({} as User);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchProfile() {
@@ -33,7 +35,6 @@ export default function Profile() {
             name: formData.get("name"),
         };
         try {
-            {/* TODO: Returns 400 error and doesn't update user info, check user controller - update function */}
             const response = await authPut("http://localhost:3000/api/me", data, {
                 headers: { "Content-Type": "application/json" },
             });
@@ -49,6 +50,8 @@ export default function Profile() {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Account deletion successful:", response.data);
+            clearToken();
+            navigate("/auth");
         } catch (error) {
             console.error("Account deletion failed:", error);
         }

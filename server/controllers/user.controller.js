@@ -3,16 +3,16 @@ import extend from 'lodash/extend.js'
 
 
 const me = async (req, res) => {
-   
+
     try {
         console.log(req.auth.sub)
         const userId = req.auth?.sub;
-            
+
         // if no userId in token, return invalid token error
         if (!userId) {
             return res.status(401).json({ "code": "INVALID_TOKEN" });
         }
-        
+
         const user = await User.findById(userId).select('_id email name tag avatar_url createdAt');
         console.log("User found for me:", user);
         return res.json({
@@ -78,19 +78,21 @@ const read = (req, res) => {
 }
 
 const update = async (req, res) => {
-    {/* TODO returns 400 error and doesn't update user info */}
     try {
-        let userId = req.auth.sub;    
+        let userId = req.auth.sub;
         if (!userId) {
             return res.status(403).json({
                 error: "Unauthorized"
             });
         }
-       
-        let user = req.profile
+
+        let user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ error: "USER_NOT_FOUND" })
+        }
+
         user = extend(user, req.body)
         await user.save()
-        console.log("user");
         res.json(user)
 
     } catch (err) {
@@ -100,11 +102,10 @@ const update = async (req, res) => {
     }
 }
 const remove = async (req, res) => {
+    console.log("Delete request received for user:", req.auth.sub);
     try {
-        let user = req.profile
+         let user = await User.findById(req.auth.sub);
         let deletedUser = await user.deleteOne()
-        deletedUser.hashed_password = undefined
-        deletedUser.salt = undefined
         res.json(deletedUser)
     } catch (err) {
         return res.status(400).json({
