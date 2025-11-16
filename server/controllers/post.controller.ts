@@ -5,12 +5,17 @@ import Post from "../models/post.model.ts"
 import User from "../models/user.model.js"
 
 export async function getPosts(req: JWTRequest, res: Response) {
-    if (!req.auth?.sub) return res.status(401).json({ error: "Not authenticated" })
+    if (!req.query.before) {
+        const posts = await Post.find().limit(10).sort({ createdAt: -1 })
+        return res.json(posts)
+    }
 
-    const user = await User.findById(req.auth.sub)
-    if (!user) return res.status(404).json({ error: "User not found" })
+    const before = new Date(req.query.before as string)
+    if (isNaN(before.valueOf())) return res.status(400).json({ error: "before date is not valid" })
 
-    return res.json({}) // TODO
+    const filter = { createdAt: { "$lt": before } }
+    const posts = await Post.find(filter).limit(10).sort({ createdAt: -1 })
+    return res.json(posts)
 }
 
 export async function createPost(req: JWTRequest, res: Response) {
@@ -36,7 +41,7 @@ export async function editPost(req: JWTRequest, res: Response) {
     if (!user) return res.status(404).json({ error: "User not found" })
 
     const postId = req.params.id
-    if (!postId) return res.status(400).json({ error: "Post ID is required"})
+    if (!postId) return res.status(400).json({ error: "Post ID is required" })
 
     const post = await Post.findById(postId)
     if (!post) return res.status(404).json({ error: "Post not found" })
@@ -57,7 +62,7 @@ export async function deletePost(req: JWTRequest, res: Response) {
     if (!user) return res.status(404).json({ error: "User not found" })
 
     const postId = req.params.id
-    if (!postId) return res.status(400).json({ error: "Post ID is required"})
+    if (!postId) return res.status(400).json({ error: "Post ID is required" })
 
     const post = await Post.findById(postId)
     if (!post) return res.status(404).json({ error: "Post not found" })
