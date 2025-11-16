@@ -5,16 +5,17 @@ import Post from "../models/post.model.ts"
 import User from "../models/user.model.js"
 
 export async function getPosts(req: JWTRequest, res: Response) {
+    let filter = {}
     if (!req.query.before) {
-        const posts = await Post.find().limit(10).sort({ createdAt: -1 })
-        return res.json(posts)
+        const before = new Date(req.query.before as string)
+        if (isNaN(before.valueOf())) return res.status(400).json({ error: "before date is not valid" })
+        filter = { createdAt: { "$lt": before } }
     }
 
-    const before = new Date(req.query.before as string)
-    if (isNaN(before.valueOf())) return res.status(400).json({ error: "before date is not valid" })
-
-    const filter = { createdAt: { "$lt": before } }
-    const posts = await Post.find(filter).limit(10).sort({ createdAt: -1 })
+    const posts = await Post
+        .find(filter)
+        .limit(10)
+        .sort({ createdAt: -1 })
     return res.json(posts)
 }
 
