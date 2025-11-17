@@ -17,7 +17,7 @@ export default function Post({ post }: { post: PostType }) {
                         <div className="w-12 rounded-full">
                             <Avatar
                                 size={48}
-                                name="test"
+                                name={post.author.name}
                                 variant="beam"
                                 colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
                             />
