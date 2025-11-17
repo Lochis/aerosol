@@ -67,7 +67,7 @@ export async function editPost(req: JWTRequest, res: Response) {
     const post = await Post.findById(postId)
     if (!post) return res.status(404).json({ error: "Post not found" })
 
-    if (post.author._id !== user._id) return res.status(403).json({ error: "Not authorized" })
+    if (!post.author.equals(user._id)) return res.status(403).json({ error: "Not authorized" })
 
     const { content } = req.body
     if (content) post.content = content
@@ -88,7 +88,7 @@ export async function deletePost(req: JWTRequest, res: Response) {
     const post = await Post.findById(postId)
     if (!post) return res.status(404).json({ error: "Post not found" })
 
-    if (post.author._id !== user._id) return res.status(403).json({ error: "Not authorized" })
+    if (!post.author.equals(user._id)) return res.status(403).json({ error: "Not authorized" })
 
     await Post.findByIdAndDelete(postId)
     return res.status(204)
