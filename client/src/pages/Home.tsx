@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import Post from "../components/Post"
-import { authGet, authPost, authPut } from "../lib/auth";
+import { authGet, authPost, authPatch } from "../lib/auth";
 import type { Post as PostType } from "../types/post.types";
 import axios from "axios";
 
@@ -52,7 +52,7 @@ export default function Home() {
 
     async function editPost() {
         try {
-            const response = await authPut("http://localhost:3000/api/posts", data, {
+            const response = await authPatch("http://localhost:3000/api/posts", data, {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Post edited successfully:", response.data);
