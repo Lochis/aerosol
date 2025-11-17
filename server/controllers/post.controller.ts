@@ -91,5 +91,5 @@ export async function deletePost(req: JWTRequest, res: Response) {
     if (!post.author.equals(user._id)) return res.status(403).json({ error: "Not authorized" })
 
     await Post.findByIdAndDelete(postId)
-    return res.status(204)
+    return res.sendStatus(204)
 }
