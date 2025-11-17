@@ -6,7 +6,7 @@ import User from "../models/user.model.js"
 
 export async function getPosts(req: JWTRequest, res: Response) {
     let filter = {}
-    if (!req.query.before) {
+    if (req.query.before) {
         const before = new Date(req.query.before as string)
         if (isNaN(before.valueOf())) return res.status(400).json({ error: "before date is not valid" })
         filter = { createdAt: { "$lt": before } }
