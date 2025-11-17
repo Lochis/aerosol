@@ -84,6 +84,7 @@ const signup = async (req, res) => {
             "data": { userId: user._id }
         })
     } catch (err) {
+        console.error(err)
         return res.status(400).json({
             "status": "error",
             "error": { "message": err }
@@ -110,4 +111,3 @@ const hasAuthorization = (req, res, next) => {
 }
 
 export default { login, signup, requireSignin, hasAuthorization }
-
