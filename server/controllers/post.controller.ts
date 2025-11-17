@@ -20,6 +20,25 @@ export async function getPosts(req: JWTRequest, res: Response) {
     return res.json(posts)
 }
 
+export async function getPostsByUser(req: JWTRequest, res: Response) {
+    const userId = req.params.id
+    if (!userId) return res.status(400).json({ error: "User ID is required" })
+
+    let filter = { author: userId }
+    if (req.query.before) {
+        const before = new Date(req.query.before as string)
+        if (isNaN(before.valueOf())) return res.status(400).json({ error: "before date is not valid" })
+        filter = { author: userId, createdAt: { "$lt": before } }
+    }
+
+    const posts = await Post
+        .find(filter)
+        .limit(10)
+        .populate("author", "name tag avatar_url")
+        .sort({ createdAt: -1 })
+    return res.json(posts)
+}
+
 export async function createPost(req: JWTRequest, res: Response) {
     if (!req.auth?.sub) return res.status(401).json({ error: "Not authenticated" })
 
