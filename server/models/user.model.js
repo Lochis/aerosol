@@ -37,7 +37,7 @@ UserSchema.virtual('password')
     this._password = password;
     if (password) {
       // 10 rounds of hashing
-      this.passwordHash = Bun.password.hashSync(password, { timeCost: 10 });
+      this.passwordHash = Bun.password.hashSync(password, { algorithm: "argon2id", timeCost: 10 });
     }
 
   })
