@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import bcrypt from 'bcrypt';
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -37,8 +36,8 @@ UserSchema.virtual('password')
   .set(function (password) {
     this._password = password;
     if (password) {
-      // 10 rounds of hashing with bcrypt
-      this.passwordHash = bcrypt.hashSync(password, 10);
+      // 10 rounds of hashing
+      this.passwordHash = Bun.password.hashSync(password, { timeCost: 10 });
     }
 
   })
@@ -57,10 +56,8 @@ UserSchema.path('passwordHash').validate(function (v) {
 
 UserSchema.methods = {
   authenticate: function (plainText) {
-    if(!this.passwordHash) return false;
-    return bcrypt.compareSync(plainText, this.passwordHash);
+    if (!this.passwordHash) return false;
+    return Bun.password.verifySync(plainText, this.passwordHash);
   },
 }
 export default mongoose.model('User', UserSchema);
-
-
