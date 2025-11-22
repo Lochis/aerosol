@@ -1,14 +1,17 @@
+import { access, constants } from 'fs/promises'
+import path from 'path'
+
 import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
+import config from './config/config.ts'
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.ts'
 import postRoutes from './routes/post.routes.ts'
 
-import path from 'path'
 const app = express()
 
 const corsOptions = {
@@ -24,9 +27,14 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-const CURRENT_WORKING_DIR = process.cwd()
-
-app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
+if (config.env === 'production') {
+  // For production, our backend will serve the frontend which should
+  // be pre-built into the dist/ directory. If it doesn't exist or has
+  // improper permissions, we should fail loudly.
+  const client = path.join(process.cwd(), 'dist', 'client')
+  await access(client, constants.R_OK | constants.X_OK)
+  app.use('/', express.static(client))
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
