@@ -2,11 +2,13 @@ import { access, constants } from 'fs/promises'
 import path from 'path'
 
 import express from 'express'
+import type { Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
+
 import config from './config/config.ts'
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.ts'
@@ -44,10 +46,12 @@ app.use(cookieParser())
 app.use(compress())
 app.use(helmet())
 
-
 app.use('/api', userRoutes)
 app.use('/api', authRoutes)
 app.use('/api', postRoutes)
+app.get('/api', (_req: Request, res: Response) => {
+  res.json({ message: "Aerosol API v2" })
+})
 
 app.use((err: any, _req: any, res: any, _next: any) => {
   if (err.name === 'UnauthorizedError') {
