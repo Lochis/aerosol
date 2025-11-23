@@ -15,6 +15,6 @@ const router = express.Router()
         .get(authCtrl.requireSignin, userCtrl.me)
         .put(authCtrl.requireSignin, userCtrl.update)
         .delete(authCtrl.requireSignin, userCtrl.remove)
-
-    export default router
+        
+export default router
 
