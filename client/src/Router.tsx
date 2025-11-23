@@ -7,34 +7,34 @@ import AuthLayout from "./AuthLayout";
 import ProtectedRoute from "./ProtectedRoute";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Layout/>,
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        element: <ProtectedRoute />,
         children: [
-          {
-            element: <ProtectedRoute/>,
-            children: [
-            { index: true, element: <Home /> },
-            { path: "/profile", element: <Profile /> },
-            ]
-          }
+          { index: true, element: <Home /> },
+          { path: "profile", element: <Profile /> },
+        ]
+      }
 
-            //{
-            //  element: <ProtectedRoute />,
-            // children: [
-            //   { path: "/dashboard", element: <Dashboard /> },
-            //   { path: "/profile", element: <Profile /> },
-        ],
-    },
-    {
+      //{
+      //  element: <ProtectedRoute />,
+      // children: [
+      //   { path: "/dashboard", element: <Dashboard /> },
+      //   { path: "/profile", element: <Profile /> },
+    ],
+  },
+  {
     path: "/",
     element: <AuthLayout />, // no Navbar
     children: [
       { path: "auth", element: <Auth /> },
     ],
   },
-    //],
-    //},
+  //],
+  //},
 ]);
 
 export default router;
