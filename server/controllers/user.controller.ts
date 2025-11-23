@@ -20,12 +20,12 @@ const me = async (req: JWTRequest, res: Response) => {
         console.log("User found for me:", user);
         return res.json({
                 "user": {
-                    "id": user._id,
-                    "email": user.email,
-                    "name": user.name,
-                    "tag": user.tag,
-                    "avatar_url": user.avatar_url,
-                    "createdAt": user.createdAt
+                    "id": user?._id,
+                    "email": user?.email,
+                    "name": user?.name,
+                    "tag": user?.tag,
+                    "avatar_url": user?.avatar_url,
+                    "createdAt": user?.createdAt
                 },
         });
     } catch (err) {
