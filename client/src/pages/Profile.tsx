@@ -10,7 +10,7 @@ export default function Profile() {
 
     useEffect(() => {
         async function fetchProfile() {
-            const response = await authGet("http://localhost:3000/api/me", {
+            const response = await authGet(`${process.env.CLIENT_API_BASE}/me`, {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Profile fetched successfully:", response.data);
@@ -37,7 +37,7 @@ export default function Profile() {
             name: formData.get("name"),
         };
         try {
-            const response = await authPut("http://localhost:3000/api/me", data, {
+            const response = await authPut(`${process.env.CLIENT_API_BASE}/me`, data, {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Profile update successful:", response.data);
@@ -48,7 +48,7 @@ export default function Profile() {
 
     async function deleteUserAccount() {
         try {
-            const response = await authDelete("http://localhost:3000/api/me", {
+            const response = await authDelete(`${process.env.CLIENT_API_BASE}/me`, {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Account deletion successful:", response.data);

@@ -22,7 +22,7 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
 
     async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        
+
         const form = event.currentTarget;
         const formData = new FormData(form);
         const data = {
@@ -31,14 +31,14 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
         };
 
         try {
-            const response = await axios.post("http://localhost:3000/api/login", data, {
+            const response = await axios.post(`${process.env.CLIENT_API_BASE}/login`, data, {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Login successful:", response.data);
             saveToken(response.data.accessToken);
             navigate("/");
 
-            
+
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error("Login failed:", error.response?.data);

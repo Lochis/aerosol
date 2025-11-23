@@ -17,7 +17,7 @@ export default function Home() {
         try {
 
             // TODO: Test once backend is ready
-            const response = await axios.get("http://localhost:3000/api/posts?before=" + (date ? date.toISOString() : ""), {
+            const response = await axios.get(`${process.env.CLIENT_API_BASE}/posts?before=` + (date ? date.toISOString() : ""), {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Posts fetched successfully:", response.data);
@@ -39,7 +39,7 @@ export default function Home() {
 
     async function createPost() {
         try {
-            const response = await authPost("http://localhost:3000/api/posts", { content: postContent }, {
+            const response = await authPost(`${process.env.CLIENT_API_BASE}/posts`, { content: postContent }, {
                 headers: { "Content-Type": "application/json" },
             });
 
@@ -52,7 +52,7 @@ export default function Home() {
 
     async function editPost() {
         try {
-            const response = await authPatch("http://localhost:3000/api/posts", data, {
+            const response = await authPatch(`${process.env.CLIENT_API_BASE}/posts`, data, {
                 headers: { "Content-Type": "application/json" },
             });
             console.log("Post edited successfully:", response.data);
