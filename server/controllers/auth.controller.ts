@@ -1,10 +1,12 @@
 import User from '../models/user.model.js'
 import jwt from 'jsonwebtoken'
 import { expressjwt } from "express-jwt";
+import type { Request as JWTRequest } from "express-jwt"
+import type { Response, RequestHandler } from 'express';
 
 import config from '../config/config.ts';
 
-const login = async (req, res) => {
+const login = async (req: JWTRequest, res: Response) => {
     console.log("Login request received:", req.body);
     try {
         let user = await User.findOne({ "email": req.body.email })
@@ -17,16 +19,21 @@ const login = async (req, res) => {
                 }
             });
         }
-
-        if (!user.authenticate(req.body.password)) {
-            return res.status(401).json({
-                "status": "error",
-                "error": {
-                    "code": "BAD_PASSWORD",
-                    "message": "Email and password don't match."
-                }
-            });
+        // call user's authenticate method if available
+        const authFn = (user as any).authenticate;
+        if (typeof authFn === "function") {
+            // use call to preserve method's this context - Mongoose instance methods
+            if (!authFn.call(user, req.body.password)) {
+                return res.status(401).json({
+                    "status": "error",
+                    "error": {
+                        "code": "BAD_PASSWORD",
+                        "message": "Email and password don't match."
+                    }
+                });
+            }
         }
+        
         const expiresIn = 900;
         const accessToken = jwt.sign({ sub: user._id }, config.jwtSecret, { expiresIn });
 
@@ -44,7 +51,7 @@ const login = async (req, res) => {
     }
 }
 
-const signup = async (req, res) => {
+const signup = async (req: JWTRequest, res: Response) => {
 
     try {
         // normalize email and name to lowercase
@@ -96,12 +103,14 @@ const signup = async (req, res) => {
 const requireSignin = expressjwt({
     secret: config.jwtSecret,
     algorithms: ["HS256"],
-    userProperty: 'auth'
+    requestProperty: 'auth',
 })
 
-const hasAuthorization = (req, res, next) => {
+/* unused at the moment
+
+const hasAuthorization = (req: JWTRequest, res: Response, next: Function) => {
     const authorized = req.profile && req.auth
-        && req.profile._id == req.auth._id
+        && req.profile._1d == req.auth._id
     if (!(authorized)) {
         return res.status('403').json({
             error: "User is not authorized"
@@ -109,5 +118,12 @@ const hasAuthorization = (req, res, next) => {
     }
     next()
 }
+    */
 
-export default { login, signup, requireSignin, hasAuthorization }
+// requireSignIn is being picked up by a wrong type
+// so explicitly defining the export type
+export default { login, signup, requireSignin } as {
+    login: typeof login;
+    signup: typeof signup;
+    requireSignin: RequestHandler;
+}
