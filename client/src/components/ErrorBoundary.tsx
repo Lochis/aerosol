@@ -8,7 +8,7 @@ import { useAuth } from "../lib/auth"
 export default function ErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <ReactErrorBoundary
-      FallbackComponent={(props) => FallbackComponent(children, props)}
+      FallbackComponent={FallbackComponent}
       onError={onError}>
       {children}
     </ReactErrorBoundary>
@@ -16,7 +16,6 @@ export default function ErrorBoundary({ children }: { children: ReactNode }) {
 }
 
 function FallbackComponent(
-  children: ReactNode,
   { error, resetErrorBoundary }: { error: any, resetErrorBoundary: any },
 ) {
   const [hidden, setHidden] = useState(false)
@@ -53,14 +52,11 @@ function FallbackComponent(
   }
 
   return (
-    <>
-      <div className="toast toast-top toast-center" hidden={hidden}>
-        <div className="alert alert-error">
-          {toastComponents}
-        </div>
+    <div className="toast toast-top toast-center" hidden={hidden}>
+      <div className="alert alert-error">
+        {toastComponents}
       </div>
-      {children}
-    </>
+    </div>
   )
 }
 
