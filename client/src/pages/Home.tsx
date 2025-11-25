@@ -4,19 +4,23 @@ import { useAuth } from "../lib/auth";
 import { useToast } from "../components/Toast";
 import type { Post as PostType } from "../types/post.types";
 
+type PostQuery = {
+    before?: Date;
+}
+
 export default function Home() {
     const POST_LENGTH_THRESHOLD = 3;
     const data = "";
     const [postContent, setPostContent] = useState("");
     const [posts, setPosts] = useState<PostType[]>([]);
-    const [postsBefore, setPostsBefore] = useState<Date | null>(new Date());
     const toast = useToast();
     const auth = useAuth();
 
-    async function getPosts(signal?: AbortSignal) {
-        const before = postsBefore?.toISOString()
+    async function getPosts(
+        { params, signal }: { params?: PostQuery, signal?: AbortSignal }
+    ) {
         try {
-            const response = await auth.api.get("/posts", { params: { before }, signal });
+            const response = await auth.api.get("/posts", { params, signal });
             console.log("Posts fetched successfully:", response.data);
             setPosts(response.data);
         } catch (error) {
@@ -27,16 +31,16 @@ export default function Home() {
 
     useEffect(() => {
         const controller = new AbortController();
-        getPosts(controller.signal);
+        getPosts({ signal: controller.signal });
         return () => controller.abort();
-    }, [auth, postsBefore]);
+    }, [auth]);
 
 
     async function createPost() {
         try {
             const response = await auth.api.post("/posts", { content: postContent });
             console.log("Post creation successful:", response.data);
-            await setPostsBefore(null);
+            await getPosts({});
         } catch (error) {
             toast.error(error);
         }
