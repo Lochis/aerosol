@@ -10,4 +10,5 @@ export interface IUser extends Document {
 
     // virtual
     password: string;
+    _password: string;
 }

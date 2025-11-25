@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.virtual('password')
   .set(function (this: IUser, password: string) {
-    this.password = password;
+    this._password = password;
     if (password) {
       // 10 rounds of hashing
       this.passwordHash = Bun.password.hashSync(password, { algorithm: "argon2id", timeCost: 10 });
@@ -44,7 +44,7 @@ UserSchema.virtual('password')
 
   })
   .get(function (this: IUser) {
-    return this.password;
+    return this._password;
   });
 
 UserSchema.path('passwordHash').validate(function (this: any) {
