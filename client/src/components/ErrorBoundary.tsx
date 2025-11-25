@@ -55,7 +55,7 @@ function FallbackComponent(
   return (
     <>
       <div className="toast toast-top toast-center" hidden={hidden}>
-        <div className="alert alert-danger">
+        <div className="alert alert-error">
           {toastComponents}
         </div>
       </div>
