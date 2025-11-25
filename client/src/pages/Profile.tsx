@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useErrorBoundary } from "react-error-boundary";
 import { useAuth } from "../lib/auth";
 import type { User } from "../types/user.types";
 import { useNavigate } from "react-router";
@@ -7,13 +8,18 @@ export default function Profile() {
 
     const [profile, setProfile] = useState<User>({} as User);
     const navigate = useNavigate();
+    const { showBoundary } = useErrorBoundary();
     const auth = useAuth();
 
     useEffect(() => {
         async function fetchProfile() {
-            const response = await auth.api.get("/me");
-            console.log("Profile fetched successfully:", response.data);
-            setProfile(response.data.user);
+            try {
+                const response = await auth.api.get("/me");
+                console.log("Profile fetched successfully:", response.data);
+                setProfile(response.data.user);
+            } catch (error) {
+                showBoundary(error);
+            }
         }
         if (auth.isAuthenticated()) {
             fetchProfile();
@@ -39,7 +45,7 @@ export default function Profile() {
             const response = await auth.api.put("/me", data);
             console.log("Profile update successful:", response.data);
         } catch (error) {
-            console.error("Profile update failed:", error);
+            showBoundary(error);
         }
     }
 
@@ -50,7 +56,7 @@ export default function Profile() {
             auth.clearToken();
             navigate("/auth");
         } catch (error) {
-            console.error("Account deletion failed:", error);
+            showBoundary(error);
         }
     }
 
