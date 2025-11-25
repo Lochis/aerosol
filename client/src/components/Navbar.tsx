@@ -1,19 +1,18 @@
 import Avatar from "boring-avatars";
 import { useAuth } from "../lib/auth";
 import { useNavigate } from "react-router";
-import axios from "axios";
 import { useState } from "react";
 
 export default function NavBar() {
-    const auth = useAuth();
-    const navigate = useNavigate();
-    const handleLogout = () => {
-        auth.clearAuth();
-        navigate("/auth");
-    }
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    auth.clearAuth();
+    navigate("/auth");
+  }
 
   type ReducedUsers = {
-    id: string;
+    _id: string;
     tag: string,
     name: string,
   };
@@ -41,7 +40,8 @@ export default function NavBar() {
 
   return (
     <div className="navbar bg-base-100 shadow-sm">
-      <div className="mx-auto flex w-full justify-between">
+
+      <div className="grid grid-cols-3 w-full justify-items-center">
         <div>
           {/* Hamburger icon*/}
           <button className="btn btn-square btn-ghost">
@@ -50,23 +50,55 @@ export default function NavBar() {
 
           <a className="btn btn-ghost text-xl" href="/">Aerosol</a>
         </div>
-        <div className="w-100 mx-auto">
-          <label className="input input-secondary">
-            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <g
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2.5"
-                fill="none"
-                stroke="currentColor"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-              </g>
-            </svg>
-            <input type="text" className="grow" placeholder="Search" onChange={(e) => handleChange(e)} />
-          </label>
+
+        <div className="dropdown">
+          <div className={`dropdown ${searchUsers.length > 0 ? 'dropdown-open' : 'dropdown-close'}`}>
+
+            <label className="input input-secondary">
+              <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <g
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  strokeWidth="2.5"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.3-4.3"></path>
+                </g>
+              </svg>
+              <input type="text" className="grow" placeholder="Search" onClick={(e) => handleChange(e)} onChange={(e) => handleChange(e)} />
+            </label>
+
+
+            {searchUsers.length > 0 && (
+              <ul tabIndex={-1}
+                className="mt-4 dropdown-content menu  bg-base-100 z-1 w-full shadow-md">
+                {searchUsers.map((user: ReducedUsers) => (
+                  <li key={user._id}>
+
+                    <a href={`/profile/${user._id}`} className="block w-full">
+
+                      <div className=" flex flex-row items-center gap-2">
+                        <Avatar
+                          size={32}
+                          name={user.name}
+                          variant="beam"
+                          colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+                        />
+                        <span>@{user.tag}</span>
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+
+          </div>
         </div>
+
+
         <div className="dropdown dropdown-bottom dropdown-end relative">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar" >
             <div className="w-10 rounded-full" >
