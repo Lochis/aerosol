@@ -14,15 +14,20 @@ export default function Profile() {
     useEffect(() => {
         async function fetchProfile() {
             try {
-                const response = await auth.api.get("/me");
+                const response = await auth.api.get("/me", { signal: controller.signal });
                 console.log("Profile fetched successfully:", response.data);
                 setProfile(response.data.user);
             } catch (error) {
+                // CAUTION: error boundary triggers a re-render,
+                // so an infinite loop can occur here
                 showBoundary(error);
             }
         }
+
+        const controller = new AbortController();
         if (auth.isAuthenticated()) {
             fetchProfile();
+            return () => controller.abort();
         }
     }, []);
 
