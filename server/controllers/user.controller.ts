@@ -6,7 +6,6 @@ import type { Response } from 'express'
 
 
 const me = async (req: JWTRequest, res: Response) => {
-
   try {
     console.log(req.auth?.sub)
     const userId = req.auth?.sub;
