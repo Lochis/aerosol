@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useNavigate } from "react-router"
 import { useAuth } from "../lib/auth"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect } from "react"
 import type { ReactNode } from "react"
 
 export function ExpiredSessionToast() {
