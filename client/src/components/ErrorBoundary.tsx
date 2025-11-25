@@ -39,7 +39,7 @@ function FallbackComponent(
   </>
 
   if (axios.isAxiosError(error) && error.config?.baseURL == process.env.CLIENT_API_BASE) {
-    const message = error.response?.data?.error?.message
+    const message = error.response?.data?.error?.message || error.response?.data?.error
     if (message) {
       toastComponents = <>
         <span>{message}</span>
