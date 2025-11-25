@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "bun --hot --env-file ../.env --port 3001 src/index.html",
     "build": "bun run --env-file ../.env build.ts --env \"CLIENT_*\" --outdir ../dist/client",
-    "build:prod": "bun run build.ts --outdir ./dist",
     "lint": "eslint ."
   },
   "dependencies": {
