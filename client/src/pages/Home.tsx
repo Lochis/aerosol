@@ -14,8 +14,9 @@ export default function Home() {
     const auth = useAuth();
 
     async function getPosts(signal?: AbortSignal) {
+        const before = date?.toISOString()
         try {
-            const response = await auth.api.get(`/posts?before=${date ? date.toISOString() : ""}`, { signal });
+            const response = await auth.api.get("/posts", { params: { before }, signal });
             console.log("Posts fetched successfully:", response.data);
             setPosts(response.data);
         } catch (error) {
