@@ -36,6 +36,7 @@ export class Auth {
       const { response, config } = error
       if (!response || !config) return Promise.reject(error)
       if (response.status !== 401) return Promise.reject(error)
+      if (!this.isAuthenticated()) return Promise.reject(error)
 
       console.log("Access token refused, refreshing token")
       return axios.post(`${config.baseURL}/refresh`, {
