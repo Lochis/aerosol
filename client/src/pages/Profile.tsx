@@ -20,7 +20,8 @@ export default function Profile() {
                 setProfile(response.data.user);
                 setIsUserProfile(true);
             } catch (error) {
-                showBoundary(error);
+                if (error?.name === "CanceledError") return;
+                toast.error(error);
                 setIsUserProfile(false);
             }
         }
