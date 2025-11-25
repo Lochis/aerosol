@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import { expressjwt } from "express-jwt";
 import type { Request as JWTRequest } from "express-jwt"
 import type { Response } from 'express';
+import type { Types } from 'mongoose';
 
 import config from '../config/config.ts';
 
@@ -34,14 +35,7 @@ export async function login(req: JWTRequest, res: Response) {
             }
         }
 
-        const expiresIn = 900;
-        const accessToken = jwt.sign({ sub: user._id }, config.jwtSecret, { expiresIn });
-
-        return res.json({
-            accessToken: accessToken,
-            tokenType: "Bearer",
-            expiresIn: expiresIn,
-        })
+        return authorizeUser(res, user._id);
     } catch (err) {
         console.log(err)
         return res.status(400).json({
@@ -49,6 +43,23 @@ export async function login(req: JWTRequest, res: Response) {
             "error": { "message": err }
         });
     }
+}
+
+function authorizeUser(res: Response, sub: Types.ObjectId) {
+    const expiresIn = 900;
+    const accessToken = jwt.sign({ sub }, config.jwtSecret, { expiresIn });
+    const refreshToken = jwt.sign(
+        { sub, refresh: true },
+        config.jwtRefreshSecret,
+        { expiresIn: 86400 }
+    );
+
+    return res.json({
+        accessToken,
+        refreshToken,
+        expiresIn,
+        tokenType: "Bearer",
+    });
 }
 
 export async function signup(req: JWTRequest, res: Response) {
@@ -104,6 +115,29 @@ export const requireSignin = expressjwt({
     algorithms: ["HS256"],
     requestProperty: 'auth',
 })
+
+// Can this be merged into the refresh function?
+export const requireRefresh = expressjwt({
+    secret: config.jwtRefreshSecret,
+    algorithms: ["HS256"],
+    requestProperty: 'auth',
+})
+
+export async function refresh(req: JWTRequest, res: Response) {
+    // In case the client accidentally sends their access token,
+    // ensure it has a refresh private claim defined
+    if (!req.auth?.refresh || !req.auth?.sub) return res.status(400).json({
+        status: "error",
+        error: {
+            code: "INVALID_REFRESH_TOKEN",
+            message: "Refresh token is invalid.",
+        }
+    })
+
+    const user = await User.findById(req.auth.sub)
+    if (!user) return res.status(404).json({ error: "User not found" })
+    return authorizeUser(res, user._id)
+}
 
 /* unused at the moment
 
