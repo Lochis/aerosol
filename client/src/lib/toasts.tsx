@@ -63,7 +63,6 @@ export function error(error: any) {
       children = <ErrorToast><span>{message}</span></ErrorToast>
     }
   }
-  children = <ExpiredSessionToast />
   _toast(children) // 😬
 }
 
