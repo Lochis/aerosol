@@ -1,5 +1,5 @@
 import { useAuth } from "../lib/auth";
-import toasts from "../lib/toasts";
+import { useToast } from "./Toast";
 
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -8,6 +8,7 @@ interface AuthProps {
 }
 
 export default function SignUp({ handleShowPassword, showPassword, setActiveTab }: AuthProps) {
+    const toast = useToast();
     const auth = useAuth();
 
     async function handleSignUp(event: React.FormEvent<HTMLFormElement>) {
@@ -26,7 +27,7 @@ export default function SignUp({ handleShowPassword, showPassword, setActiveTab 
             console.log("Sign up successful:", response.data);
             setActiveTab("login");
         } catch (error) {
-            toasts.error(error);
+            toast.error(error);
         }
     }
 

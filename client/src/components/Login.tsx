@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useAuth } from "../lib/auth";
-import toasts from "../lib/toasts";
+import { useToast } from "./Toast";
 
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -9,6 +9,7 @@ interface AuthProps {
 
 export default function Login({ handleShowPassword, showPassword }: AuthProps) {
     const navigate = useNavigate();
+    const toast = useToast();
     const auth = useAuth();
 
     async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
@@ -27,7 +28,7 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
             auth.saveAuthFromResponse(res);
             navigate("/");
         } catch (error) {
-            toasts.error(error);
+            toast.error(error);
         }
     }
 

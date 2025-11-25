@@ -1,17 +1,22 @@
 import ErrorBoundary from "./components/ErrorBoundary.tsx"
 import Navbar from "./components/Navbar.jsx";
-import { ToastContainer } from "./lib/toasts.tsx";
+import { Toast, ToastContext } from "./components/Toast.tsx";
+import { useState } from "react";
 import { Outlet } from "react-router";
+import type { ReactNode } from "react";
 
 export default function Layout() {
+  const [toast, setToast] = useState<ReactNode>()
   return (
     <div className="lg:max-w-7xl mx-auto">
-      <ToastContainer />
-      <Navbar />
       <ErrorBoundary>
-        <main>
-          <Outlet />
-        </main>
+        <ToastContext value={new Toast(setToast)}>
+          {toast}
+          <Navbar />
+          <main>
+            <Outlet />
+          </main>
+        </ToastContext>
       </ErrorBoundary>
     </div>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Post from "../components/Post"
 import { useAuth } from "../lib/auth";
-import toasts from "../lib/toasts";
+import { useToast } from "../components/Toast";
 import type { Post as PostType } from "../types/post.types";
 
 export default function Home() {
@@ -10,6 +10,7 @@ export default function Home() {
     const [postContent, setPostContent] = useState("");
     const [posts, setPosts] = useState<PostType[]>([]);
     const [date, setDate] = useState<Date | null>(new Date());
+    const toast = useToast();
     const auth = useAuth();
 
     async function getPosts() {
@@ -18,7 +19,7 @@ export default function Home() {
             console.log("Posts fetched successfully:", response.data);
             setPosts(response.data);
         } catch (error) {
-            toasts.error(error);
+            toast.error(error);
         }
     }
 
@@ -37,7 +38,7 @@ export default function Home() {
             console.log("Post creation successful:", response.data);
             await getPosts();
         } catch (error) {
-            toasts.error(error);
+            toast.error(error);
         }
     }
 
@@ -46,7 +47,7 @@ export default function Home() {
             const response = await auth.api.patch("/posts", data);
             console.log("Post edited successfully:", response.data);
         } catch (error) {
-            toasts.error(error);
+            toast.error(error);
         }
     }
 
