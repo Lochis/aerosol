@@ -23,9 +23,9 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
         };
 
         try {
-            const response = await auth.client.post("/login", data);
-            console.log("Login successful:", response.data);
-            auth.saveToken(response.data.accessToken); // NOTE: Bearer type omitted
+            const res = await auth.client.post("/login", data);
+            console.log("Login successful:", res.data);
+            auth.saveAuthFromResponse(res);
             navigate("/");
         } catch (error) {
             showBoundary(error);

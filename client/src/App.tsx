@@ -1,12 +1,12 @@
 import { RouterProvider } from 'react-router'
 import router from './Router.tsx'
 import './App.css'
-import { Auth, AuthContext, useStateToken } from './lib/auth.ts'
+import { Auth, AuthContext, useAuthData } from './lib/auth.ts'
 
 function App() {
-  const [token, setToken] = useStateToken()
+  const [authData, setAuthData] = useAuthData()
   return (
-    <AuthContext value={new Auth(token, setToken)}>
+    <AuthContext value={new Auth(authData, setAuthData)}>
       <RouterProvider router={router} />
     </AuthContext>
   )

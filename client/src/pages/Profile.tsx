@@ -53,7 +53,7 @@ export default function Profile() {
         try {
             const response = await auth.api.delete("/me");
             console.log("Account deletion successful:", response.data);
-            auth.clearToken();
+            auth.clearAuth();
             navigate("/auth");
         } catch (error) {
             showBoundary(error);

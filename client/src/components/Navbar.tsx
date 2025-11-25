@@ -6,7 +6,7 @@ export default function NavBar() {
     const auth = useAuth();
     const navigate = useNavigate();
     const handleLogout = () => {
-        auth.clearToken();
+        auth.clearAuth();
         navigate("/auth");
     }
 

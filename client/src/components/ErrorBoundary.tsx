@@ -24,7 +24,7 @@ function FallbackComponent(
   const auth = useAuth()
 
   function login() {
-    auth.clearToken()
+    auth.clearAuth()
     navigate("/auth")
     resetErrorBoundary()
   }
@@ -39,15 +39,15 @@ function FallbackComponent(
   </>
 
   if (axios.isAxiosError(error) && error.config?.baseURL == process.env.CLIENT_API_BASE) {
-    const message = error.response?.data?.error?.message || error.response?.data?.error
-    if (message) {
-      toastComponents = <>
-        <span>{message}</span>
-      </>
-    } else if (error.status == 401) {
+    const message = String(error.response?.data?.error?.message || error.response?.data?.error)
+    if (error.status == 401 && message.startsWith("UnauthorizedError")) {
       toastComponents = <>
         <span>Your session has expired. Please log in again!</span>
         <button onClick={login} className="btn btn-primary">Login</button>
+      </>
+    } else if (message) {
+      toastComponents = <>
+        <span>{message}</span>
       </>
     }
   }
