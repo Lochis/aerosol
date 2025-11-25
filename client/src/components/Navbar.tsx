@@ -28,7 +28,7 @@ export default function NavBar() {
 
   const getUsers = async (search: string) => {
     try {
-      const response = await axios.get(`${process.env.CLIENT_API_BASE}/users?search=${search}`, {
+      const response = await auth.client.get(`${process.env.CLIENT_API_BASE}/users?search=${search}`, {
         headers: { "Content-Type": "application/json" },
       });
 
