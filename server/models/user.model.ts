@@ -8,17 +8,20 @@ const UserSchema = new mongoose.Schema({
     trim: true,
     unique: [true, 'Email already exists'],
     match: [/.+\@.+\..+/, 'Please fill a valid email address'],
-    required: [true, 'Email is required']
+    required: [true, 'Email is required'],
+    maxLength: 64,
   },
   name: {
     type: String,
     trim: true,
-    required: [true, 'Name is required']
+    required: [true, 'Name is required'],
+    maxLength: 32,
   },
   tag: {
     type: String,
     trim: true,
-    required: [true, 'Tag is required']
+    required: [true, 'Tag is required'],
+    maxLength: 32,
   },
   createdAt: {
     type: Date,
