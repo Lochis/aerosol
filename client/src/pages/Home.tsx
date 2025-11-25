@@ -13,22 +13,22 @@ export default function Home() {
     const toast = useToast();
     const auth = useAuth();
 
-    async function getPosts() {
+    async function getPosts(signal?: AbortSignal) {
         try {
-            const response = await auth.api.get(`/posts?before=${date ? date.toISOString() : ""}`);
+            const response = await auth.api.get(`/posts?before=${date ? date.toISOString() : ""}`, { signal });
             console.log("Posts fetched successfully:", response.data);
             setPosts(response.data);
         } catch (error) {
+            if (error?.name === "CanceledError") return;
             toast.error(error);
         }
     }
 
     // Get posts on component mount
     useEffect(() => {
-        async function fetchPosts() {
-            await getPosts();
-        }
-        fetchPosts();
+        const controller = new AbortController();
+        getPosts(controller.signal);
+        return () => controller.abort();
     }, []);
 
 
