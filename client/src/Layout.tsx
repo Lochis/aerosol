@@ -11,8 +11,8 @@ export default function Layout() {
     <div className="lg:max-w-7xl mx-auto">
       <ErrorBoundary>
         <ToastContext value={new Toast(setToast)}>
-          {toast}
           <Navbar />
+          {toast}
           <main>
             <Outlet />
           </main>
