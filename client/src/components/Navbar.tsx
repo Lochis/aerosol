@@ -1,11 +1,12 @@
 import Avatar from "boring-avatars";
-import { clearToken } from "../lib/auth";
+import { useAuth } from "../lib/auth";
 import { useNavigate } from "react-router";
 
 export default function NavBar() {
+    const auth = useAuth();
     const navigate = useNavigate();
     const handleLogout = () => {
-        clearToken();
+        auth.clearToken();
         navigate("/auth");
     }
 

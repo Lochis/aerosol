@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { authDelete, authGet, authPut, clearToken, isAuthenticated } from "../lib/auth";
+import { useAuth } from "../lib/auth";
 import type { User } from "../types/user.types";
 import { useNavigate } from "react-router";
 
@@ -7,16 +7,15 @@ export default function Profile() {
 
     const [profile, setProfile] = useState<User>({} as User);
     const navigate = useNavigate();
+    const auth = useAuth();
 
     useEffect(() => {
         async function fetchProfile() {
-            const response = await authGet(`${process.env.CLIENT_API_BASE}/me`, {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.api.get("/me");
             console.log("Profile fetched successfully:", response.data);
             setProfile(response.data.user);
         }
-        if (isAuthenticated()) {
+        if (auth.isAuthenticated()) {
             fetchProfile();
         }
     }, []);
@@ -37,9 +36,7 @@ export default function Profile() {
             name: formData.get("name"),
         };
         try {
-            const response = await authPut(`${process.env.CLIENT_API_BASE}/me`, data, {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.api.put("/me", data);
             console.log("Profile update successful:", response.data);
         } catch (error) {
             console.error("Profile update failed:", error);
@@ -48,11 +45,9 @@ export default function Profile() {
 
     async function deleteUserAccount() {
         try {
-            const response = await authDelete(`${process.env.CLIENT_API_BASE}/me`, {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.api.delete("/me");
             console.log("Account deletion successful:", response.data);
-            clearToken();
+            auth.clearToken();
             navigate("/auth");
         } catch (error) {
             console.error("Account deletion failed:", error);

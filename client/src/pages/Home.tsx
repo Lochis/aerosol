@@ -1,28 +1,22 @@
 
 import { useEffect, useState } from "react";
 import Post from "../components/Post"
-import { authGet, authPost, authPatch } from "../lib/auth";
+import { useAuth } from "../lib/auth";
 import type { Post as PostType } from "../types/post.types";
-import axios from "axios";
 
 export default function Home() {
     const POST_LENGTH_THRESHOLD = 3;
     const data = "";
     const [postContent, setPostContent] = useState("");
     const [posts, setPosts] = useState<PostType[]>([]);
-
     const [date, setDate] = useState<Date | null>(new Date());
+    const auth = useAuth();
 
     async function getPosts() {
         try {
-
-            // TODO: Test once backend is ready
-            const response = await axios.get(`${process.env.CLIENT_API_BASE}/posts?before=` + (date ? date.toISOString() : ""), {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.api.get(`/posts?before=${date ? date.toISOString() : ""}`);
             console.log("Posts fetched successfully:", response.data);
             setPosts(response.data);
-
         } catch (error) {
             console.error("Error fetching posts:", error);
         }
@@ -39,10 +33,7 @@ export default function Home() {
 
     async function createPost() {
         try {
-            const response = await authPost(`${process.env.CLIENT_API_BASE}/posts`, { content: postContent }, {
-                headers: { "Content-Type": "application/json" },
-            });
-
+            const response = await auth.api.post("/posts", { content: postContent });
             console.log("Post creation successful:", response.data);
             await getPosts();
         } catch (error) {
@@ -52,9 +43,7 @@ export default function Home() {
 
     async function editPost() {
         try {
-            const response = await authPatch(`${process.env.CLIENT_API_BASE}/posts`, data, {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.api.patch("/posts", data);
             console.log("Post edited successfully:", response.data);
         } catch (error) {
             console.error("Error editing post:", error);

@@ -1,6 +1,7 @@
 
 import axios from "axios";
 import { useState } from "react";
+import { useAuth } from "../lib/auth";
 
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -11,6 +12,7 @@ interface AuthProps {
 export default function SignUp({ handleShowPassword, showPassword, setActiveTab }: AuthProps) {
     const [toastVisible, setToastVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const auth = useAuth();
 
     function showToast() {
         setToastVisible(true);
@@ -31,9 +33,7 @@ export default function SignUp({ handleShowPassword, showPassword, setActiveTab 
         };
 
         try {
-            const response = await axios.post(`${process.env.CLIENT_API_BASE}/signup`, data, {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.client.post("/signup", data);
             console.log("Sign up successful:", response.data);
             setActiveTab("login");
         } catch (error) {

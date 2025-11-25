@@ -1,7 +1,7 @@
 import { useState } from "react";
-import {useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import axios from "axios";
-import { saveToken } from "../lib/auth";
+import { useAuth } from "../lib/auth";
 
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -12,6 +12,7 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
     const [toastVisible, setToastVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
+    const auth = useAuth();
 
     function showToast() {
         setToastVisible(true);
@@ -31,11 +32,9 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
         };
 
         try {
-            const response = await axios.post(`${process.env.CLIENT_API_BASE}/login`, data, {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.client.post("/login", data);
             console.log("Login successful:", response.data);
-            saveToken(response.data.accessToken);
+            auth.saveToken(response.data.accessToken); // NOTE: Bearer type omitted
             navigate("/");
 
 
