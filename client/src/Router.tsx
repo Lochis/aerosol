@@ -16,6 +16,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Home /> },
           { path: "profile", element: <Profile /> },
+          { path: "profile/:tag", element: <Profile /> }
         ]
       }
 
