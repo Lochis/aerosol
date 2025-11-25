@@ -18,6 +18,7 @@ export default function Profile() {
                 console.log("Profile fetched successfully:", response.data);
                 setProfile(response.data.user);
             } catch (error) {
+                if (error?.name === "CanceledError") return;
                 toast.error(error);
             }
         }
