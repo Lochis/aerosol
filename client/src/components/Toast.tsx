@@ -25,7 +25,7 @@ export function ErrorToast({ children }: { children: ReactNode }) {
   const toast = useToast()
 
   useEffect(() => {
-    const id = setTimeout(() => toast.clear(), 3000)
+    const id = setTimeout(() => toast.clear(), 10000)
     return () => clearTimeout(id)
   }, [toast])
 
