@@ -43,7 +43,7 @@ function FallbackComponent(
     if (error.status == 401 && message.startsWith("UnauthorizedError")) {
       toastComponents = <>
         <span>Your session has expired. Please log in again!</span>
-        <button onClick={login} className="btn btn-primary">Login</button>
+        <button onClick={login} className="btn btn-sm btn-primary">Login</button>
       </>
     } else if (message) {
       toastComponents = <>
