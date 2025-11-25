@@ -9,12 +9,12 @@ export default function Home() {
     const data = "";
     const [postContent, setPostContent] = useState("");
     const [posts, setPosts] = useState<PostType[]>([]);
-    const [date, setDate] = useState<Date | null>(new Date());
+    const [postsBefore, setPostsBefore] = useState<Date | null>(new Date());
     const toast = useToast();
     const auth = useAuth();
 
     async function getPosts(signal?: AbortSignal) {
-        const before = date?.toISOString()
+        const before = postsBefore?.toISOString()
         try {
             const response = await auth.api.get("/posts", { params: { before }, signal });
             console.log("Posts fetched successfully:", response.data);
@@ -25,19 +25,18 @@ export default function Home() {
         }
     }
 
-    // Get posts on component mount
     useEffect(() => {
         const controller = new AbortController();
         getPosts(controller.signal);
         return () => controller.abort();
-    }, []);
+    }, [auth, postsBefore]);
 
 
     async function createPost() {
         try {
             const response = await auth.api.post("/posts", { content: postContent });
             console.log("Post creation successful:", response.data);
-            await getPosts();
+            await setPostsBefore(null);
         } catch (error) {
             toast.error(error);
         }
