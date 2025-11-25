@@ -39,15 +39,15 @@ export class Auth {
       if (!this.isAuthenticated()) return Promise.reject(error)
 
       console.log("Access token refused, refreshing token")
-      return axios.post(`${config.baseURL}/refresh`, {
+      return axios.post(`${config.baseURL}/refresh`, undefined, {
         timeout: config.timeout,
         headers: { Authorization: this.data.refreshToken },
 
       }).then((res: AxiosResponse) => {
         console.log("Successfully refreshed, retrying last request")
         this.saveAuthFromResponse(res)
-        config.headers.set("Authorization", res.data.accessToken)
-        return this.client(config)
+        config.headers.set("Authorization", `${res.data.tokenType} ${res.data.accessToken}`)
+        return axios.request(config)
 
       }).catch((_err: AxiosError) => {
         console.log("Failed to refresh token")
