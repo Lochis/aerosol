@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
-import { useErrorBoundary } from "react-error-boundary";
 import { useAuth } from "../lib/auth";
+import toasts from "../lib/toasts";
 
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -8,7 +8,6 @@ interface AuthProps {
 }
 
 export default function Login({ handleShowPassword, showPassword }: AuthProps) {
-    const { showBoundary } = useErrorBoundary();
     const navigate = useNavigate();
     const auth = useAuth();
 
@@ -28,7 +27,7 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
             auth.saveAuthFromResponse(res);
             navigate("/");
         } catch (error) {
-            showBoundary(error);
+            toasts.error(error);
         }
     }
 

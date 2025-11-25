@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useErrorBoundary } from "react-error-boundary";
 import { useAuth } from "../lib/auth";
+import toasts from "../lib/toasts";
 import type { User } from "../types/user.types";
 import { useNavigate } from "react-router";
 
@@ -8,7 +8,6 @@ export default function Profile() {
 
     const [profile, setProfile] = useState<User>({} as User);
     const navigate = useNavigate();
-    const { showBoundary } = useErrorBoundary();
     const auth = useAuth();
 
     useEffect(() => {
@@ -18,9 +17,7 @@ export default function Profile() {
                 console.log("Profile fetched successfully:", response.data);
                 setProfile(response.data.user);
             } catch (error) {
-                // CAUTION: error boundary triggers a re-render,
-                // so an infinite loop can occur here
-                showBoundary(error);
+                toasts.error(error);
             }
         }
 
@@ -50,7 +47,7 @@ export default function Profile() {
             const response = await auth.api.put("/me", data);
             console.log("Profile update successful:", response.data);
         } catch (error) {
-            showBoundary(error);
+            toasts.error(error);
         }
     }
 
@@ -61,7 +58,7 @@ export default function Profile() {
             auth.clearAuth();
             navigate("/auth");
         } catch (error) {
-            showBoundary(error);
+            toasts.error(error);
         }
     }
 

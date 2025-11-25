@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useErrorBoundary } from "react-error-boundary";
 import Post from "../components/Post"
 import { useAuth } from "../lib/auth";
+import toasts from "../lib/toasts";
 import type { Post as PostType } from "../types/post.types";
 
 export default function Home() {
@@ -10,7 +10,6 @@ export default function Home() {
     const [postContent, setPostContent] = useState("");
     const [posts, setPosts] = useState<PostType[]>([]);
     const [date, setDate] = useState<Date | null>(new Date());
-    const { showBoundary } = useErrorBoundary();
     const auth = useAuth();
 
     async function getPosts() {
@@ -19,7 +18,7 @@ export default function Home() {
             console.log("Posts fetched successfully:", response.data);
             setPosts(response.data);
         } catch (error) {
-            showBoundary(error);
+            toasts.error(error);
         }
     }
 
@@ -38,7 +37,7 @@ export default function Home() {
             console.log("Post creation successful:", response.data);
             await getPosts();
         } catch (error) {
-            showBoundary(error);
+            toasts.error(error);
         }
     }
 
@@ -47,7 +46,7 @@ export default function Home() {
             const response = await auth.api.patch("/posts", data);
             console.log("Post edited successfully:", response.data);
         } catch (error) {
-            showBoundary(error);
+            toasts.error(error);
         }
     }
 

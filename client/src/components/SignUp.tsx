@@ -1,5 +1,5 @@
-import { useErrorBoundary } from "react-error-boundary";
 import { useAuth } from "../lib/auth";
+import toasts from "../lib/toasts";
 
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -8,7 +8,6 @@ interface AuthProps {
 }
 
 export default function SignUp({ handleShowPassword, showPassword, setActiveTab }: AuthProps) {
-    const { showBoundary } = useErrorBoundary();
     const auth = useAuth();
 
     async function handleSignUp(event: React.FormEvent<HTMLFormElement>) {
@@ -27,7 +26,7 @@ export default function SignUp({ handleShowPassword, showPassword, setActiveTab 
             console.log("Sign up successful:", response.data);
             setActiveTab("login");
         } catch (error) {
-            showBoundary(error);
+            toasts.error(error);
         }
     }
 
