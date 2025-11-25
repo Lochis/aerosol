@@ -1,9 +1,11 @@
 import User from '../models/user.model.js'
 import extend from 'lodash/extend.js'
 import type { Request as JWTRequest } from "express-jwt"
-import type { Response } from 'express'
+import type { NextFunction, Response } from 'express'
 
-
+type UserRequest = JWTRequest & {
+  profile?: any
+}
 
 const me = async (req: JWTRequest, res: Response) => {
   try {
@@ -61,15 +63,16 @@ const list = async (req: JWTRequest, res: Response) => {
     })
   }
 }
-/*
-const userByID = async (req: JWTRequest, res: Response, next: Function, id: string) => {
+
+const userByTag = async (req: UserRequest, res: Response, next: NextFunction, tag: string) => {
     try {
-        let user = await User.findById(id)
+        let user = await User.findOne({ tag: tag })
         if (!user)
             return res.status(400).json({
                 error: "User not found"
             })
         req.profile = user
+        console.log("Request profile set to:", req.profile);
         next()
     } catch (err) {
         return res.status(400).json({
@@ -77,12 +80,14 @@ const userByID = async (req: JWTRequest, res: Response, next: Function, id: stri
         })
     }
 }
-const read = (req: JWTRequest, res: Response) => {
-    req.profile.hashed_password = undefined
-    req.profile.salt = undefined
+const read = (req: UserRequest, res: Response) => {
+  console.log("Read request for user:", req.profile);
+    req.profile.passwordHash = undefined
+    req.profile.email = undefined
+    //console.log("Read user:", req.profile);
     return res.json(req.profile)
 }
-*/
+
 
 const update = async (req: JWTRequest, res: Response) => {
   try {
@@ -140,6 +145,6 @@ const removeMany = async (req: JWTRequest, res: Response) => {
     });
   }
 };
-export default { create, me, /*userByID, read,*/ list, remove, removeMany, update }
+export default { create, me, userByTag, read, list, remove, removeMany, update }
 
 
