@@ -53,12 +53,13 @@ export class Toast {
     )
 
     if (axios.isAxiosError(error) && error.config?.baseURL == process.env.CLIENT_API_BASE) {
-      const message = String(error.response?.data?.error?.message || error.response?.data?.error)
+      let message = error.response?.data?.error?.message || error.response?.data?.error
+      const messageString = message ? String(message) : ""
 
-      if (error.status == 401 && message.startsWith("UnauthorizedError")) {
+      if (error.status == 401 && messageString.startsWith("UnauthorizedError")) {
         toast = <ExpiredSessionToast />
-      } else if (message) {
-        toast = <ErrorToast><span>{message}</span></ErrorToast>
+      } else if (messageString) {
+        toast = <ErrorToast><span>{messageString}</span></ErrorToast>
       }
     }
 
