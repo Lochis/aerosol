@@ -11,7 +11,10 @@ router.route('/api/users/:userId').get(userCtrl.read)
 router.route('/api/users/:userId').put(userCtrl.update)
 router.route('/api/users/:userId').delete(userCtrl.remove)*/
 
+router.route('/users/:tag').get(userCtrl.read);
 router.route('/users').get(userCtrl.list);
+
+router.param('tag', userCtrl.userByTag);
 
 router.route('/me')
   .get(requireSignin, userCtrl.me)

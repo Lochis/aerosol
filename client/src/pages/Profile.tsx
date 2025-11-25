@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useErrorBoundary } from "react-error-boundary";
 import { useAuth } from "../lib/auth";
 import type { User } from "../types/user.types";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 export default function Profile() {
-
+    const { tag } = useParams<{ tag?: string }>();
     const [profile, setProfile] = useState<User>({} as User);
+    const [isUserProfile, setIsUserProfile] = useState<boolean>(false);
     const navigate = useNavigate();
     const { showBoundary } = useErrorBoundary();
     const auth = useAuth();
@@ -17,12 +18,30 @@ export default function Profile() {
                 const response = await auth.api.get("/me");
                 console.log("Profile fetched successfully:", response.data);
                 setProfile(response.data.user);
+                setIsUserProfile(true);
             } catch (error) {
                 showBoundary(error);
+                setIsUserProfile(false);
             }
         }
-        if (auth.isAuthenticated()) {
+
+        async function fetchProfileByTag() {
+            try {
+                console.log("Fetching profile for tag:", tag);
+                const response = await auth.api.get(`/users/${tag}`);
+                console.log("Profile fetched by tag successfully:", response.data);
+                setProfile(response.data);
+                setIsUserProfile(false);
+            } catch (error) {
+                showBoundary(error);
+                setIsUserProfile(false);
+            }
+        }
+
+        if (auth.isAuthenticated() && !tag) {
             fetchProfile();
+        } else if (tag) {
+            fetchProfileByTag();
         }
     }, []);
 
@@ -72,7 +91,7 @@ export default function Profile() {
                     <span className="label">Name</span>
                     <input type="text" placeholder="name" name="name" value={profile.name} onChange={handleChange} />
                 </label>
-                <label className="input">
+                <label className="input" hidden={!isUserProfile}>
                     <span className="label">Email</span>
                     <input type="text" placeholder="email" name="email" value={profile.email} readOnly />
                 </label>
@@ -82,7 +101,7 @@ export default function Profile() {
                 </label>
             </form>
 
-            <div className="flex flex-col md:flex-row md:justify-between mt-12 gap-4">
+            <div hidden={!isUserProfile} className="flex flex-col md:flex-row md:justify-between mt-12 gap-4">
                 <button className="btn btn-primary w-full lg:max-w-1/6" onClick={updateUserProfile}>Save Changes</button>
                 {/* TODO: add confirmation dialog */}
                 <button className="btn btn-danger w-full lg:max-w-1/6" onClick={deleteUserAccount}>Delete Account</button>

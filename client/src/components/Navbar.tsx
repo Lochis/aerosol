@@ -77,7 +77,7 @@ export default function NavBar() {
                 {searchUsers.map((user: ReducedUsers) => (
                   <li key={user._id}>
 
-                    <a href={`/profile/${user._id}`} className="block w-full">
+                    <a href={`/profile/${user.tag}`} className="block w-full">
 
                       <div className=" flex flex-row items-center gap-2">
                         <Avatar
