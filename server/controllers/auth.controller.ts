@@ -2,11 +2,11 @@ import User from '../models/user.model.js'
 import jwt from 'jsonwebtoken'
 import { expressjwt } from "express-jwt";
 import type { Request as JWTRequest } from "express-jwt"
-import type { Response, RequestHandler } from 'express';
+import type { Response } from 'express';
 
 import config from '../config/config.ts';
 
-const login = async (req: JWTRequest, res: Response) => {
+export async function login(req: JWTRequest, res: Response) {
     console.log("Login request received:", req.body);
     try {
         let user = await User.findOne({ "email": req.body.email })
@@ -33,7 +33,7 @@ const login = async (req: JWTRequest, res: Response) => {
                 });
             }
         }
-        
+
         const expiresIn = 900;
         const accessToken = jwt.sign({ sub: user._id }, config.jwtSecret, { expiresIn });
 
@@ -51,7 +51,7 @@ const login = async (req: JWTRequest, res: Response) => {
     }
 }
 
-const signup = async (req: JWTRequest, res: Response) => {
+export async function signup(req: JWTRequest, res: Response) {
 
     try {
         // normalize email and name to lowercase
@@ -99,8 +99,7 @@ const signup = async (req: JWTRequest, res: Response) => {
     }
 }
 
-
-const requireSignin = expressjwt({
+export const requireSignin = expressjwt({
     secret: config.jwtSecret,
     algorithms: ["HS256"],
     requestProperty: 'auth',
@@ -119,11 +118,3 @@ const hasAuthorization = (req: JWTRequest, res: Response, next: Function) => {
     next()
 }
     */
-
-// requireSignIn is being picked up by a wrong type
-// so explicitly defining the export type
-export default { login, signup, requireSignin } as {
-    login: typeof login;
-    signup: typeof signup;
-    requireSignin: RequestHandler;
-}

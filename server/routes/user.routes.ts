@@ -1,6 +1,6 @@
 import express from 'express'
 import userCtrl from '../controllers/user.controller.js'
-import authCtrl from '../controllers/auth.controller.js'
+import { requireSignin } from '../controllers/auth.controller.js'
 const router = express.Router()
 
     /*router.route('/api/users').post(userCtrl.create)
@@ -12,9 +12,8 @@ const router = express.Router()
     router.route('/api/users/:userId').delete(userCtrl.remove)*/
 
     router.route('/me')
-        .get(authCtrl.requireSignin, userCtrl.me)
-        .put(authCtrl.requireSignin, userCtrl.update)
-        .delete(authCtrl.requireSignin, userCtrl.remove)
-        
-export default router
+        .get(requireSignin, userCtrl.me)
+        .put(requireSignin, userCtrl.update)
+        .delete(requireSignin, userCtrl.remove)
 
+export default router
