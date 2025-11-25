@@ -22,15 +22,15 @@ export function ExpiredSessionToast() {
 }
 
 export function ErrorToast({ children }: { children: ReactNode }) {
-  const [hidden, setHidden] = useState(false)
+  const toast = useToast()
 
   useEffect(() => {
-    const id = setTimeout(() => setHidden(true), 10000)
+    const id = setTimeout(() => toast.clear(), 3000)
     return () => clearTimeout(id)
-  }, [])
+  }, [toast])
 
   return (
-    <div className="toast toast-top toast-center" hidden={hidden}>
+    <div className="toast toast-top toast-center">
       <div className="alert alert-error">
         {children}
       </div>
@@ -56,6 +56,10 @@ export class Toast {
       }
     }
     this.setNode(toast)
+  }
+
+  clear() {
+    this.setNode(null)
   }
 }
 
