@@ -79,7 +79,7 @@ function EditContent(
     const [content, setContent] = useState(post.content);
     const canSave = !pending && content !== post.content;
 
-    async function onSave() {
+    async function handleSave() {
         setPending(true);
 
         try {
@@ -100,7 +100,7 @@ function EditContent(
             onChange={(e) => setContent(e.target.value)}
             disabled={pending} />
         <div className="flex gap-2 mt-2 justify-end">
-            <button className="btn btn-primary btn-sm" onClick={onSave} disabled={!canSave}>Save</button>
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={!canSave}>Save</button>
             <button className="btn btn-outline btn-sm" onClick={onExit} disabled={pending}>Cancel</button>
         </div>
     </div>;
