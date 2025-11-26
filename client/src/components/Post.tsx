@@ -56,7 +56,7 @@ export default function Post({ post }: { post: PostType }) {
                 ) : (
                     <EditContent
                         post={post}
-                        onCancel={() => setEditing(false)}
+                        onExit={() => setEditing(false)}
                     />
                 )}
 
@@ -77,18 +77,18 @@ export default function Post({ post }: { post: PostType }) {
     );
 }
 
-function EditContent({ post, onCancel }: { post: PostType, onCancel: () => void }) {
+function EditContent({ post, onExit }: { post: PostType, onExit: () => void }) {
     const [pending, setPending] = useState(false);
     async function onSave() {
         setPending(true);
-        setTimeout(() => {setPending(false); onCancel()}, 1500);
+        setTimeout(() => {setPending(false); onExit()}, 1500);
     }
 
     return <div className="mt-2">
         <textarea className="textarea textarea-bordered w-full" value={post.content} disabled={pending} />
         <div className="flex gap-2 mt-2 justify-end">
             <button className="btn btn-primary btn-sm" onClick={onSave} disabled={pending}>Save</button>
-            <button className="btn btn-outline btn-sm" onClick={onCancel} disabled={pending}>Cancel</button>
+            <button className="btn btn-outline btn-sm" onClick={onExit} disabled={pending}>Cancel</button>
         </div>
     </div>;
 }
