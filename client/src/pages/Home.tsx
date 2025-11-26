@@ -47,6 +47,10 @@ export default function Home() {
         }
     }
 
+    function handlePostDelete(post: PostType) {
+        setPosts(posts.filter(p => p._id !== post._id))
+    }
+
     function handlePostEdit(post: PostType) {
         setPosts(posts.map(p => p._id === post._id ? post : p))
     }
@@ -61,7 +65,7 @@ export default function Home() {
 
             <div className="py-2">
                 {posts.map((post) => (
-                    <Post key={post._id} post={post} onEdit={handlePostEdit} />
+                    <Post key={post._id} post={post} onDelete={handlePostDelete} onEdit={handlePostEdit} />
                 ))}
             </div>
         </div>

@@ -2,15 +2,21 @@ import Avatar from "boring-avatars";
 import CommentIcon from "./icons/CommentIcon";
 import RepostIcon from "./icons/RepostIcon";
 import HeartIcon from "./icons/HeartIcon";
+import TrashIcon from "./icons/TrashIcon";
 import type { Post as PostType } from "../types/post.types";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";
 import { useToast } from "./Toast";
 
-export default function Post(
-    { post, onEdit }:
-        { post: PostType, onEdit: (post: PostType) => void }
-) {
+export default function Post({
+    post,
+    onDelete,
+    onEdit,
+}: {
+    post: PostType,
+    onDelete: (post: PostType) => void,
+    onEdit: (post: PostType) => void,
+}) {
     const auth = useAuth();
     const [editing, setEditing] = useState(false);
     const canEdit = post.author._id === auth.me._id && !editing;
@@ -47,6 +53,7 @@ export default function Post(
                 ) : (
                     <EditContent
                         post={post}
+                        onDelete={onDelete}
                         onEdit={onEdit}
                         onExit={() => setEditing(false)}
                     />
@@ -69,15 +76,36 @@ export default function Post(
     );
 }
 
-function EditContent(
-    { post, onEdit, onExit }:
-        { post: PostType, onEdit: (post: PostType) => void, onExit: () => void }
-) {
+function EditContent({
+    post,
+    onDelete,
+    onEdit,
+    onExit,
+}: {
+    post: PostType,
+    onDelete: (post: PostType) => void,
+    onEdit: (post: PostType) => void,
+    onExit: () => void,
+}) {
     const auth = useAuth();
     const toast = useToast();
     const [pending, setPending] = useState(false);
     const [content, setContent] = useState(post.content);
     const canSave = !pending && content !== post.content;
+
+    async function handleDelete() {
+        setPending(true);
+
+        try {
+            await auth.api.delete(`/posts/${post._id}`);
+            onDelete(post)
+            onExit();
+        } catch (error) {
+            toast.error(error);
+        }
+
+        setPending(false);
+    }
 
     async function handleSave() {
         setPending(true);
@@ -100,6 +128,7 @@ function EditContent(
             onChange={(e) => setContent(e.target.value)}
             disabled={pending} />
         <div className="flex gap-2 mt-2 justify-end">
+            <button className="btn btn-circle btn-ghost btn-sm" onClick={handleDelete} disabled={pending}><TrashIcon /></button>
             <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={!canSave}>Save</button>
             <button className="btn btn-outline btn-sm" onClick={onExit} disabled={pending}>Cancel</button>
         </div>
