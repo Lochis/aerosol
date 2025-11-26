@@ -75,19 +75,17 @@ export default function Post({ post }: { post: PostType }) {
 }
 
 function EditContent({ post, onCancel }: { post: PostType, onCancel: () => void }) {
-    function onSave() {
-        // PAS de backend → sauvegarde locale seulement
-        // post.content = content; // Don't assign properties: https://stackoverflow.com/a/57660743
-        // setEdit(false);
-        onCancel();
-        alert("Post updated (local only)");
+    const [pending, setPending] = useState(false);
+    async function onSave() {
+        setPending(true);
+        setTimeout(() => {setPending(false); onCancel()}, 1500);
     }
 
     return <div className="mt-2">
-        <textarea className="textarea textarea-bordered w-full" value={post.content} />
+        <textarea className="textarea textarea-bordered w-full" value={post.content} disabled={pending} />
         <div className="flex gap-2 mt-2 justify-end">
-            <button className="btn btn-primary btn-sm" onClick={onSave}>Save</button>
-            <button className="btn btn-outline btn-sm" onClick={onCancel}>Cancel</button>
+            <button className="btn btn-primary btn-sm" onClick={onSave} disabled={pending}>Save</button>
+            <button className="btn btn-outline btn-sm" onClick={onCancel} disabled={pending}>Cancel</button>
         </div>
     </div>;
 }
