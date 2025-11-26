@@ -18,7 +18,6 @@ export default function Post(
     return (
         <div className="card bg-base-100 shadow-md border border-base-350 max-w-xl mx-auto mb-4">
             <div className="card-body p-4">
-
                 {/* User info */}
                 <div className="flex items-center gap-3">
                     <div className="avatar">
@@ -31,14 +30,10 @@ export default function Post(
                             />
                         </div>
                     </div>
-
                     <div className="flex flex-row w-full justify-between">
                         <div>
                             <h2 className="font-semibold text-sm">{post.author.name}</h2>
-                            <p className="text-xs opacity-60">
-                                @{post.author.tag} ·{" "}
-                                {new Date(post.createdAt).toLocaleString()}
-                            </p>
+                            <p className="text-xs opacity-60">@{post.author.tag} · {new Date(post.createdAt).toLocaleString()}</p>
                         </div>
 
                         {canEdit && (
