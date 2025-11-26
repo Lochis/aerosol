@@ -65,7 +65,7 @@ export default function Home() {
 
             <div className="py-2">
                 {posts.map((post) => (
-                    <Post key={post.id} post={post} />
+                    <Post key={post._id} post={post} />
                 ))}
             </div>
         </div>
