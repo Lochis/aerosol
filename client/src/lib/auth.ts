@@ -3,10 +3,12 @@ import { createContext, useContext, useState } from "react";
 import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 
 const BASE_URL = `${process.env.CLIENT_API_BASE}`;
+const SUB_KEY = "sub";
 const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
 
 export type AuthData = {
+  sub: string
   accessToken: string
   refreshToken: string
 }
@@ -65,7 +67,12 @@ export class Auth {
     return this.client;
   }
 
+  get me(): { _id: string } {
+    return { _id: this.data.sub }
+  }
+
   saveAuth(data: AuthData) {
+    localStorage.setItem(SUB_KEY, data.sub);
     localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
     this.setData(data);
@@ -73,6 +80,7 @@ export class Auth {
 
   saveAuthFromResponse(res: AxiosResponse) {
     this.saveAuth({
+      sub: res.data.sub,
       accessToken: `${res.data.tokenType} ${res.data.accessToken}`,
       refreshToken: `${res.data.tokenType} ${res.data.refreshToken}`,
     });
@@ -80,16 +88,17 @@ export class Auth {
 
   clearAuth() {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
-    this.setData({ accessToken: "", refreshToken: "" });
+    this.setData({ sub: "", accessToken: "", refreshToken: "" });
   }
 
   isAuthenticated() {
-    return !!this.data.accessToken;
+    return !!this.data.sub;
   }
 }
 export const AuthContext = createContext<Auth | null>(null);
 export const useAuth = () => useContext(AuthContext)!
 export const useAuthData = () => useState<AuthData>({
+  sub: localStorage.getItem(SUB_KEY) || "",
   accessToken: localStorage.getItem(ACCESS_TOKEN_KEY) || "",
   refreshToken: localStorage.getItem(REFRESH_TOKEN_KEY) || "",
 })
