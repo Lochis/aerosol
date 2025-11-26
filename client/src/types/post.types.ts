@@ -4,7 +4,7 @@ export interface Post {
         _id: string;
         name: string;
         tag: string;
-        avatar_url?: string | null; // IMPORTANT : string, pas Buffer !
+        avatar_url?: string | null;
     };
     content: string;
     createdAt: string;
