@@ -128,7 +128,7 @@ function EditContent({
             onChange={(e) => setContent(e.target.value)}
             disabled={pending} />
         <div className="flex gap-2 mt-2 justify-end">
-            <button className="btn btn-circle btn-ghost btn-sm" onClick={handleDelete} disabled={pending}><TrashIcon /></button>
+            <button className="btn btn-circle btn-ghost btn-sm opacity-70" onClick={handleDelete} disabled={pending}><TrashIcon /></button>
             <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={!canSave}>Save</button>
             <button className="btn btn-outline btn-sm" onClick={onExit} disabled={pending}>Cancel</button>
         </div>
