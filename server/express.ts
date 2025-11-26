@@ -9,6 +9,7 @@ import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
 
+import { globalBurstLimit, globalRateLimit } from './ratelimits.ts'
 import config from './config/config.ts'
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.ts'
@@ -45,6 +46,8 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(compress())
 app.use(helmet())
+app.use(globalBurstLimit)
+app.use(globalRateLimit)
 
 app.use('/api', userRoutes)
 app.use('/api', authRoutes)
