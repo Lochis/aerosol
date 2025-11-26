@@ -38,11 +38,37 @@ export function ErrorToast({ children }: { children: ReactNode }) {
   )
 }
 
+export function SuccessToast({ children }: { children: ReactNode }) {
+  const toast = useToast()
+  useEffect(() => {
+    const id = setTimeout(() => toast.clear(), 5000)
+    return () => clearTimeout(id)
+  }, [toast])
+
+  return (
+    <div className="toast toast-top toast-center">
+      <div className="alert alert-success">
+        {children}
+      </div>
+    </div>
+  )
+}
+
 export class Toast {
   setNode: (node: ReactNode) => void;
 
   constructor(setNode: (node: ReactNode) => void) {
     this.setNode = setNode;
+  }
+
+  success(message: string | ReactNode) {
+    const toast = (
+      <SuccessToast>
+        {typeof message === "string" ? <span>{message}</span> : message}
+      </SuccessToast>
+    )
+
+    this.setNode(toast)
   }
 
   error(error: any) {

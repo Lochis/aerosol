@@ -99,6 +99,7 @@ function EditContent({
         try {
             await auth.api.delete(`/posts/${post._id}`);
             onDelete(post)
+            toast.success(<span>Post deleted successfully.</span>);
             onExit();
         } catch (error) {
             toast.error(error);
