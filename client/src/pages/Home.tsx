@@ -46,15 +46,6 @@ export default function Home() {
         }
     }
 
-    async function editPost() {
-        try {
-            const response = await auth.api.patch("/posts", data);
-            console.log("Post edited successfully:", response.data);
-        } catch (error) {
-            toast.error(error);
-        }
-    }
-
     function handlePostEdit(post: PostType) {
         setPosts(posts.map(p => p._id === post._id ? post : p))
     }
