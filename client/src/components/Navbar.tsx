@@ -1,6 +1,6 @@
 import Avatar from "boring-avatars";
 import { useAuth } from "../lib/auth";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { useState } from "react";
 
 export default function NavBar() {
@@ -48,7 +48,7 @@ export default function NavBar() {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block h-5 w-5 stroke-current"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path> </svg>
           </button>
 
-          <a className="btn btn-ghost text-xl" href="/">Aerosol</a>
+          <Link className="btn btn-ghost text-xl" to="/">Aerosol</Link>
         </div>
 
         <div className="dropdown">
@@ -77,7 +77,7 @@ export default function NavBar() {
                 {searchUsers.map((user: ReducedUsers) => (
                   <li key={user._id}>
 
-                    <a href={`/profile/${user.tag}`} className="block w-full">
+                    <Link to={`/profile/${user.tag}`} className="block w-full">
 
                       <div className=" flex flex-row items-center gap-2">
                         <Avatar
@@ -88,7 +88,7 @@ export default function NavBar() {
                         />
                         <span>@{user.tag}</span>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -114,9 +114,9 @@ export default function NavBar() {
             tabIndex={-1}
             className="right-0 menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-36 p-2 shadow-sm">
             <li>
-              <a className="justify-between" href="/profile">
+              <Link to="/profile">
                 Profile
-              </a>
+              </Link>
             </li>
             <li><a>Settings</a></li>
             <li><a onClick={handleLogout}>Logout</a></li>

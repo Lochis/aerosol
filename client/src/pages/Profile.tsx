@@ -50,7 +50,7 @@ export default function Profile() {
             return () => { controller.abort(); }
         }
         
-    }, []);
+    }, [tag]);
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
