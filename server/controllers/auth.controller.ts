@@ -2,11 +2,12 @@ import User from '../models/user.model.js'
 import jwt from 'jsonwebtoken'
 import { expressjwt } from "express-jwt";
 import type { Request as JWTRequest } from "express-jwt"
-import type { Response, RequestHandler } from 'express';
+import type { Response } from 'express';
+import type { Types } from 'mongoose';
 
 import config from '../config/config.ts';
 
-const login = async (req: JWTRequest, res: Response) => {
+export async function login(req: JWTRequest, res: Response) {
     console.log("Login request received:", req.body);
     try {
         let user = await User.findOne({ "email": req.body.email })
@@ -33,15 +34,8 @@ const login = async (req: JWTRequest, res: Response) => {
                 });
             }
         }
-        
-        const expiresIn = 900;
-        const accessToken = jwt.sign({ sub: user._id }, config.jwtSecret, { expiresIn });
 
-        return res.json({
-            accessToken: accessToken,
-            tokenType: "Bearer",
-            expiresIn: expiresIn,
-        })
+        return authorizeUser(res, user._id);
     } catch (err) {
         console.log(err)
         return res.status(400).json({
@@ -51,7 +45,24 @@ const login = async (req: JWTRequest, res: Response) => {
     }
 }
 
-const signup = async (req: JWTRequest, res: Response) => {
+function authorizeUser(res: Response, sub: Types.ObjectId) {
+    const expiresIn = 900;
+    const accessToken = jwt.sign({ sub }, config.jwtSecret, { expiresIn });
+    const refreshToken = jwt.sign(
+        { sub, refresh: true },
+        config.jwtRefreshSecret,
+        { expiresIn: 86400 }
+    );
+
+    return res.json({
+        accessToken,
+        refreshToken,
+        expiresIn,
+        tokenType: "Bearer",
+    });
+}
+
+export async function signup(req: JWTRequest, res: Response) {
 
     try {
         // normalize email and name to lowercase
@@ -99,12 +110,34 @@ const signup = async (req: JWTRequest, res: Response) => {
     }
 }
 
-
-const requireSignin = expressjwt({
+export const requireSignin = expressjwt({
     secret: config.jwtSecret,
     algorithms: ["HS256"],
     requestProperty: 'auth',
 })
+
+// Can this be merged into the refresh function?
+export const requireRefresh = expressjwt({
+    secret: config.jwtRefreshSecret,
+    algorithms: ["HS256"],
+    requestProperty: 'auth',
+})
+
+export async function refresh(req: JWTRequest, res: Response) {
+    // In case the client accidentally sends their access token,
+    // ensure it has a refresh private claim defined
+    if (!req.auth?.refresh || !req.auth?.sub) return res.status(400).json({
+        status: "error",
+        error: {
+            code: "INVALID_REFRESH_TOKEN",
+            message: "Refresh token is invalid.",
+        }
+    })
+
+    const user = await User.findById(req.auth.sub)
+    if (!user) return res.status(404).json({ error: "User not found" })
+    return authorizeUser(res, user._id)
+}
 
 /* unused at the moment
 
@@ -119,11 +152,3 @@ const hasAuthorization = (req: JWTRequest, res: Response, next: Function) => {
     next()
 }
     */
-
-// requireSignIn is being picked up by a wrong type
-// so explicitly defining the export type
-export default { login, signup, requireSignin } as {
-    login: typeof login;
-    signup: typeof signup;
-    requireSignin: RequestHandler;
-}

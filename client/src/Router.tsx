@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router";
 import Layout from "./Layout";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -16,14 +16,9 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Home /> },
           { path: "profile", element: <Profile /> },
+          { path: "profile/:tag", element: <Profile /> }
         ]
       }
-
-      //{
-      //  element: <ProtectedRoute />,
-      // children: [
-      //   { path: "/dashboard", element: <Dashboard /> },
-      //   { path: "/profile", element: <Profile /> },
     ],
   },
   {
@@ -33,8 +28,6 @@ const router = createBrowserRouter([
       { path: "auth", element: <Auth /> },
     ],
   },
-  //],
-  //},
 ]);
 
 export default router;

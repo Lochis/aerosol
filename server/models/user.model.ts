@@ -5,19 +5,22 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     trim: true,
-    unique: [true, "Email already exists"],
-    match: [/.+\@.+\..+/, "Please fill a valid email address"],
-    required: [true, "Email is required"],
+    unique: [true, 'Email already exists'],
+    match: [/.+\@.+\..+/, 'Please fill a valid email address'],
+    required: [true, 'Email is required'],
+    maxLength: 64,
   },
   name: {
     type: String,
     trim: true,
-    required: [true, "Name is required"],
+    required: [true, 'Name is required'],
+    maxLength: 32,
   },
   tag: {
     type: String,
     trim: true,
-    required: [true, "Tag is required"],
+    required: [true, 'Tag is required'],
+    maxLength: 32,
   },
   createdAt: {
     type: Date,
@@ -34,11 +37,13 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-// On utilise un champ interne _plainPassword pour éviter la récursion
-UserSchema.virtual("password")
-  .set(function (this: IUser & { _plainPassword?: string }, password: string) {
-    // garder le mot de passe brut juste pour la validation
-    this._plainPassword = password;
+UserSchema.virtual('password')
+  .set(function (this: IUser, password: string) {
+    this._password = password;
+    if (password) {
+      // 10 rounds of hashing
+      this.passwordHash = Bun.password.hashSync(password, { algorithm: "argon2id", timeCost: 10 });
+    }
 
     if (password) {
       // 10 rounds of hashing avec Bun
@@ -48,8 +53,8 @@ UserSchema.virtual("password")
       });
     }
   })
-  .get(function (this: IUser & { _plainPassword?: string }) {
-    return this._plainPassword;
+  .get(function (this: IUser) {
+    return this._password;
   });
 
 // Validation sur le mot de passe

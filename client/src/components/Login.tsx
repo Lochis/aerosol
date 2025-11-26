@@ -1,7 +1,6 @@
-import { useState } from "react";
-import {useNavigate } from "react-router";
-import axios from "axios";
-import { saveToken } from "../lib/auth";
+import { useNavigate } from "react-router";
+import { useAuth } from "../lib/auth";
+import { useToast } from "./Toast";
 
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -9,16 +8,9 @@ interface AuthProps {
 }
 
 export default function Login({ handleShowPassword, showPassword }: AuthProps) {
-    const [toastVisible, setToastVisible] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
-
-    function showToast() {
-        setToastVisible(true);
-        setTimeout(() => {
-            setToastVisible(false);
-        }, 5000);
-    }
+    const toast = useToast();
+    const auth = useAuth();
 
     async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -31,34 +23,18 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
         };
 
         try {
-            const response = await axios.post(`${process.env.CLIENT_API_BASE}/login`, data, {
-                headers: { "Content-Type": "application/json" },
-            });
-            console.log("Login successful:", response.data);
-            saveToken(response.data.accessToken);
+            const res = await auth.client.post("/login", data);
+            console.log("Login successful:", res.data);
+            auth.saveAuthFromResponse(res);
             navigate("/");
-
-
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error("Login failed:", error.response?.data);
-                setErrorMessage(error.response?.data?.error.message || "Login failed");
-                showToast();
-            } else {
-                console.error("Login failed:", error);
-            }
+            toast.error(error);
         }
     }
 
 
     return (
         <>
-            <div className="toast toast-top toast-center" hidden={!toastVisible}>
-                <div className="alert alert-danger">
-                    <span>{errorMessage}</span>
-                </div>
-            </div>
-
             <form className="flex flex-col gap-4 items-center" onSubmit={handleLogin}>
                 <fieldset className="fieldset bg-base-200 border-base-800 p-2 w-full flex flex-col items-center justify-center">
                     <label className="input validator">

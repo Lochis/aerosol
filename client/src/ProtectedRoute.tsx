@@ -1,13 +1,17 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { isAuthenticated } from "./lib/auth";
+import { Navigate, Outlet, useLocation } from "react-router";
+import { useAuth } from "./lib/auth";
 import { useEffect } from "react";
 
 export default function ProtectedRoute() {
-    useEffect(() => {
-        console.log("ProtectedRoute - Not Authenticated, redirecting to /auth");
-    }, []);
+  const auth = useAuth()
+
+  useEffect(() => {
+    if (auth.isAuthenticated()) return;
+    console.log("ProtectedRoute - Not Authenticated, redirecting to /auth");
+  }, [auth]);
+
   const location = useLocation();
-  if (!isAuthenticated()) {
+  if (!auth.isAuthenticated()) {
     return <Navigate to="/auth" replace state={{ from: location }} />;
   }
   return <Outlet />

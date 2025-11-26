@@ -1,63 +1,57 @@
-
 import { useEffect, useState } from "react";
 import Post from "../components/Post"
-import { authGet, authPost, authPatch } from "../lib/auth";
+import { useAuth } from "../lib/auth";
+import { useToast } from "../components/Toast";
 import type { Post as PostType } from "../types/post.types";
-import axios from "axios";
+
+type PostQuery = {
+    before?: Date;
+}
 
 export default function Home() {
     const POST_LENGTH_THRESHOLD = 3;
     const data = "";
     const [postContent, setPostContent] = useState("");
     const [posts, setPosts] = useState<PostType[]>([]);
+    const toast = useToast();
+    const auth = useAuth();
 
-    const [date, setDate] = useState<Date | null>(new Date());
-
-    async function getPosts() {
+    async function getPosts(
+        { params, signal }: { params?: PostQuery, signal?: AbortSignal }
+    ) {
         try {
-
-            // TODO: Test once backend is ready
-            const response = await axios.get(`${process.env.CLIENT_API_BASE}/posts?before=` + (date ? date.toISOString() : ""), {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.api.get("/posts", { params, signal });
             console.log("Posts fetched successfully:", response.data);
             setPosts(response.data);
-
         } catch (error) {
-            console.error("Error fetching posts:", error);
+            if (error?.name === "CanceledError") return;
+            toast.error(error);
         }
     }
 
-    // Get posts on component mount
     useEffect(() => {
-        async function fetchPosts() {
-            await getPosts();
-        }
-        fetchPosts();
-    }, []);
+        const controller = new AbortController();
+        getPosts({ signal: controller.signal });
+        return () => controller.abort();
+    }, [auth]);
 
 
     async function createPost() {
         try {
-            const response = await authPost(`${process.env.CLIENT_API_BASE}/posts`, { content: postContent }, {
-                headers: { "Content-Type": "application/json" },
-            });
-
+            const response = await auth.api.post("/posts", { content: postContent });
             console.log("Post creation successful:", response.data);
-            await getPosts();
+            await getPosts({});
         } catch (error) {
-            console.error("Error creating post:", error);
+            toast.error(error);
         }
     }
 
     async function editPost() {
         try {
-            const response = await authPatch(`${process.env.CLIENT_API_BASE}/posts`, data, {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.api.patch("/posts", data);
             console.log("Post edited successfully:", response.data);
         } catch (error) {
-            console.error("Error editing post:", error);
+            toast.error(error);
         }
     }
 

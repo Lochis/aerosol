@@ -8,8 +8,8 @@
   },
   "private": true,
   "scripts": {
-    "dev": "concurrently \"bun --cwd client dev\" \"bun --cwd server dev\"",
-    "build": "bun --cwd client build && bun --cwd server build",
+    "dev": "bun i && concurrently \"bun --cwd client dev\" \"bun --cwd server dev\"",
+    "build": "bun i && bun --cwd client build && bun --cwd server build",
     "start": "bun run build && bun --port 3000 dist/server/server.js"
   },
   "workspaces": [

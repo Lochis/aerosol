@@ -1,6 +1,5 @@
-
-import axios from "axios";
-import { useState } from "react";
+import { useAuth } from "../lib/auth";
+import { useToast } from "./Toast";
 
 interface AuthProps {
     handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -9,15 +8,8 @@ interface AuthProps {
 }
 
 export default function SignUp({ handleShowPassword, showPassword, setActiveTab }: AuthProps) {
-    const [toastVisible, setToastVisible] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
-
-    function showToast() {
-        setToastVisible(true);
-        setTimeout(() => {
-            setToastVisible(false);
-        }, 5000);
-    }
+    const toast = useToast();
+    const auth = useAuth();
 
     async function handleSignUp(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -31,31 +23,17 @@ export default function SignUp({ handleShowPassword, showPassword, setActiveTab 
         };
 
         try {
-            const response = await axios.post(`${process.env.CLIENT_API_BASE}/signup`, data, {
-                headers: { "Content-Type": "application/json" },
-            });
+            const response = await auth.client.post("/signup", data);
             console.log("Sign up successful:", response.data);
             setActiveTab("login");
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error("Sign up failed:", error.response?.data);
-                setErrorMessage(error.response?.data?.error.message || "Sign up failed");
-                showToast();
-            } else {
-                console.error("Sign up failed:", error);
-            }
+            toast.error(error);
         }
     }
 
 
     return (
         <>
-            <div className="toast toast-top toast-center" hidden={!toastVisible}>
-                <div className="alert alert-danger">
-                    <span>{errorMessage}</span>
-                </div>
-            </div>
-
             <form className="flex flex-col gap-4 w-full items-center" onSubmit={handleSignUp}>
                 <fieldset className="fieldset bg-base-200 p-2 w-full flex flex-col items-center justify-center">
                     <label className="input validator">
