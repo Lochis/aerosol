@@ -4,9 +4,12 @@ import RepostIcon from "./icons/RepostIcon";
 import HeartIcon from "./icons/HeartIcon";
 import type { Post as PostType } from "../types/post.types";
 import { useState } from "react";
+import { useAuth } from "../lib/auth";
 
 export default function Post({ post }: { post: PostType }) {
-    const [edit, setEdit] = useState(false);
+    const auth = useAuth();
+    const [editing, setEditing] = useState(false);
+    const canEdit = post.author._id === auth.me._id && !editing;
 
     return (
         <div className="card bg-base-100 shadow-md border border-base-350 max-w-xl mx-auto mb-4">
@@ -34,10 +37,10 @@ export default function Post({ post }: { post: PostType }) {
                             </p>
                         </div>
 
-                        {!edit && (
+                        {canEdit && (
                             <button
                                 className="btn btn-ghost btn-sm btn-outline"
-                                onClick={() => setEdit(true)}
+                                onClick={() => setEditing(true)}
                             >
                                 Edit
                             </button>
@@ -46,14 +49,14 @@ export default function Post({ post }: { post: PostType }) {
                 </div>
 
                 {/* Post content */}
-                {!edit ? (
+                {!editing ? (
                     <p className="mt-2">
                         {post.content}
                     </p>
                 ) : (
                     <EditContent
                         post={post}
-                        onCancel={() => setEdit(false)}
+                        onCancel={() => setEditing(false)}
                     />
                 )}
 
