@@ -19,12 +19,6 @@ const router = createBrowserRouter([
           { path: "profile/:tag", element: <Profile /> }
         ]
       }
-
-      //{
-      //  element: <ProtectedRoute />,
-      // children: [
-      //   { path: "/dashboard", element: <Dashboard /> },
-      //   { path: "/profile", element: <Profile /> },
     ],
   },
   {
@@ -34,8 +28,6 @@ const router = createBrowserRouter([
       { path: "auth", element: <Auth /> },
     ],
   },
-  //],
-  //},
 ]);
 
 export default router;
