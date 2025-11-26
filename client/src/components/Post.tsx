@@ -7,14 +7,6 @@ import { useState } from "react";
 
 export default function Post({ post }: { post: PostType }) {
     const [edit, setEdit] = useState(false);
-    const [content, setContent] = useState(post.content);
-
-    function saveEdit() {
-        // PAS de backend → sauvegarde locale seulement
-        post.content = content;
-        setEdit(false);
-        alert("Post updated (local only)");
-    }
 
     return (
         <div className="card bg-base-100 shadow-md border border-base-350 max-w-xl mx-auto mb-4">
@@ -56,30 +48,13 @@ export default function Post({ post }: { post: PostType }) {
                 {/* Post content */}
                 {!edit ? (
                     <p className="mt-2">
-                        {content}
+                        {post.content}
                     </p>
                 ) : (
-                    <div className="mt-2">
-                        <textarea
-                            className="textarea textarea-bordered w-full"
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                        />
-                        <div className="flex gap-2 mt-2">
-                            <button
-                                className="btn btn-primary btn-sm"
-                                onClick={saveEdit}
-                            >
-                                Save
-                            </button>
-                            <button
-                                className="btn btn-outline btn-sm"
-                                onClick={() => setEdit(false)}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
+                    <EditContent
+                        post={post}
+                        onCancel={() => setEdit(false)}
+                    />
                 )}
 
                 {/* Interaction buttons */}
@@ -97,4 +72,22 @@ export default function Post({ post }: { post: PostType }) {
             </div>
         </div>
     );
+}
+
+function EditContent({ post, onCancel }: { post: PostType, onCancel: () => void }) {
+    function onSave() {
+        // PAS de backend → sauvegarde locale seulement
+        // post.content = content; // Don't assign properties: https://stackoverflow.com/a/57660743
+        // setEdit(false);
+        onCancel();
+        alert("Post updated (local only)");
+    }
+
+    return <div className="mt-2">
+        <textarea className="textarea textarea-bordered w-full" value={post.content} />
+        <div className="flex gap-2 mt-2">
+            <button className="btn btn-primary btn-sm" onClick={onSave}>Save</button>
+            <button className="btn btn-outline btn-sm" onClick={onCancel}>Cancel</button>
+        </div>
+    </div>;
 }
