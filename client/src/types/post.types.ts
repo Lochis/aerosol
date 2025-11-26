@@ -1,10 +1,10 @@
 export interface Post {
-    id: string;
+    _id: string;
     author: {
         _id: string;
         name: string;
         tag: string;
-        avatar_url?: Buffer;
+        avatar_url?: string;
     };
     content: string;
     createdAt: string;

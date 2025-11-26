@@ -4,9 +4,16 @@ import RepostIcon from "./icons/RepostIcon";
 import HeartIcon from "./icons/HeartIcon";
 import type { Post as PostType } from "../types/post.types";
 import { useState } from "react";
+import { useAuth } from "../lib/auth";
+import { useToast } from "./Toast";
 
-export default function Post({ post }: { post: PostType }) {
-    const [edit, setEdit] = useState(false);
+export default function Post(
+    { post, onEdit }:
+        { post: PostType, onEdit: (post: PostType) => void }
+) {
+    const auth = useAuth();
+    const [editing, setEditing] = useState(false);
+    const canEdit = post.author._id === auth.me._id && !editing;
 
     return (
         <div className="card bg-base-100 shadow-md border border-base-350 max-w-xl mx-auto mb-4">
@@ -28,26 +35,22 @@ export default function Post({ post }: { post: PostType }) {
                             <h2 className="font-semibold text-sm">{post.author.name}</h2>
                             <p className="text-xs opacity-60">@{post.author.tag} · {new Date(post.createdAt).toLocaleString()}</p>
                         </div>
-                        <button className="btn btn-ghost btn-sm btn-outline float-end">Edit</button>
-
+                        {canEdit && <button className="btn btn-ghost btn-sm btn-outline" onClick={() => setEditing(true)}>Edit</button>}
                     </div>
                 </div>
 
                 {/* Post content */}
-                <p className="mt-2">
-                    {post.content}
-                </p>
-
-                {/* Optional image */}
-                {/*{picture && (
-                <div className="mt-2">
-                    <img
-                        src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
-                        className="rounded-xl border border-base-300"
+                {!editing ? (
+                    <p className="mt-2">
+                        {post.content}
+                    </p>
+                ) : (
+                    <EditContent
+                        post={post}
+                        onEdit={onEdit}
+                        onExit={() => setEditing(false)}
                     />
-                </div>
-                )}*/}
-
+                )}
 
                 {/* Interaction buttons */}
                 <div className="flex justify-between text-sm opacity-70">
@@ -64,4 +67,41 @@ export default function Post({ post }: { post: PostType }) {
             </div>
         </div>
     );
+}
+
+function EditContent(
+    { post, onEdit, onExit }:
+        { post: PostType, onEdit: (post: PostType) => void, onExit: () => void }
+) {
+    const auth = useAuth();
+    const toast = useToast();
+    const [pending, setPending] = useState(false);
+    const [content, setContent] = useState(post.content);
+    const canSave = !pending && content !== post.content;
+
+    async function handleSave() {
+        setPending(true);
+
+        try {
+            const res = await auth.api.patch(`/posts/${post._id}`, { content });
+            onEdit(res.data)
+            onExit();
+        } catch (error) {
+            toast.error(error);
+        }
+
+        setPending(false);
+    }
+
+    return <div className="mt-2">
+        <textarea
+            className="textarea textarea-bordered w-full"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            disabled={pending} />
+        <div className="flex gap-2 mt-2 justify-end">
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={!canSave}>Save</button>
+            <button className="btn btn-outline btn-sm" onClick={onExit} disabled={pending}>Cancel</button>
+        </div>
+    </div>;
 }

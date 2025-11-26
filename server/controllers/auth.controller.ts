@@ -55,6 +55,7 @@ function authorizeUser(res: Response, sub: Types.ObjectId) {
     );
 
     return res.json({
+        sub,
         accessToken,
         refreshToken,
         expiresIn,

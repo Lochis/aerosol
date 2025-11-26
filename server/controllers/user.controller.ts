@@ -146,5 +146,3 @@ const removeMany = async (req: JWTRequest, res: Response) => {
   }
 };
 export default { create, me, userByTag, read, list, remove, removeMany, update }
-
-

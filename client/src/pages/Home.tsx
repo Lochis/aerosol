@@ -40,19 +40,15 @@ export default function Home() {
         try {
             const response = await auth.api.post("/posts", { content: postContent });
             console.log("Post creation successful:", response.data);
+            setPostContent("");
             await getPosts({});
         } catch (error) {
             toast.error(error);
         }
     }
 
-    async function editPost() {
-        try {
-            const response = await auth.api.patch("/posts", data);
-            console.log("Post edited successfully:", response.data);
-        } catch (error) {
-            toast.error(error);
-        }
+    function handlePostEdit(post: PostType) {
+        setPosts(posts.map(p => p._id === post._id ? post : p))
     }
 
     return (
@@ -65,7 +61,7 @@ export default function Home() {
 
             <div className="py-2">
                 {posts.map((post) => (
-                    <Post key={post.id} post={post} />
+                    <Post key={post._id} post={post} onEdit={handlePostEdit} />
                 ))}
             </div>
         </div>

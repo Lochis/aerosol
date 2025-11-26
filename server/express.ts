@@ -13,17 +13,26 @@ import postRoutes from './routes/post.routes.ts'
 
 const app = express()
 
+// whitelist for cors to allow dev and prod origins
+const whitelist = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://aerosol.dev',
+  'https://www.aerosol.dev'
+]
+
 const corsOptions = {
-  // set precise origin or reflect the request origin:
   origin: (origin: any, callback: any) => {
-    // allow same-origin and local dev
-    callback(null, origin ?? 'http://localhost:3000')
+    if (!origin) return callback(null, true);
+    if (whitelist.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   optionsSuccessStatus: 200
 }
+
 app.use(cors(corsOptions));
 
 app.use(express.json());

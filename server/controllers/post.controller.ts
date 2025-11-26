@@ -23,7 +23,7 @@ export async function getPosts(req: JWTRequest, res: Response) {
 export async function getPostsByUser(req: JWTRequest, res: Response) {
     const userId = req.params.id
     if (!userId) return res.status(400).json({ error: "User ID is required" })
-        // TODO: add this to fix prod inside filter: , createdAt: {} as any
+
     let filter = { author: userId }
     if (req.query.before) {
         const before = new Date(req.query.before as string)
@@ -64,7 +64,9 @@ export async function editPost(req: JWTRequest, res: Response) {
     const postId = req.params.id
     if (!postId) return res.status(400).json({ error: "Post ID is required" })
 
-    const post = await Post.findById(postId)
+    const post = await Post
+        .findById(postId)
+        .populate("author", "name tag avatar_url")
     if (!post) return res.status(404).json({ error: "Post not found" })
 
     if (!post.author.equals(user._id)) return res.status(403).json({ error: "Not authorized" })

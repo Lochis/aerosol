@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema({
     default: Date.now
   },
   avatar_url: {
-    type: Buffer,
+    type: String,
     trim: true,
   },
   passwordHash: {
