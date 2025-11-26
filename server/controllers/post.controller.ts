@@ -15,7 +15,7 @@ export async function getPosts(req: JWTRequest, res: Response) {
     const posts = await Post
         .find(filter)
         .limit(10)
-        .populate("author", "name tag")
+        .populate("author", "name tag avatar_url")
         .sort({ createdAt: -1 })
     return res.json(posts)
 }
@@ -34,7 +34,7 @@ export async function getPostsByUser(req: JWTRequest, res: Response) {
     const posts = await Post
         .find(filter)
         .limit(10)
-        .populate("author", "name tag")   // ✅ corrigé
+        .populate("author", "name tag avatar_url")
         .sort({ createdAt: -1 })
     return res.json(posts)
 }
