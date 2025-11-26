@@ -35,15 +35,7 @@ export default function Post(
                             <h2 className="font-semibold text-sm">{post.author.name}</h2>
                             <p className="text-xs opacity-60">@{post.author.tag} · {new Date(post.createdAt).toLocaleString()}</p>
                         </div>
-
-                        {canEdit && (
-                            <button
-                                className="btn btn-ghost btn-sm btn-outline"
-                                onClick={() => setEditing(true)}
-                            >
-                                Edit
-                            </button>
-                        )}
+                        {canEdit && <button className="btn btn-ghost btn-sm btn-outline" onClick={() => setEditing(true)}>Edit</button>}
                     </div>
                 </div>
 
