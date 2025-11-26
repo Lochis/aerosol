@@ -85,7 +85,7 @@ function EditContent({ post, onCancel }: { post: PostType, onCancel: () => void 
 
     return <div className="mt-2">
         <textarea className="textarea textarea-bordered w-full" value={post.content} />
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-2 mt-2 justify-end">
             <button className="btn btn-primary btn-sm" onClick={onSave}>Save</button>
             <button className="btn btn-outline btn-sm" onClick={onCancel}>Cancel</button>
         </div>
