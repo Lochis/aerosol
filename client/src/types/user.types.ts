@@ -1,8 +1,8 @@
 export interface User {
-    id: string;
+    _id: string;
     email?: string;
     name: string;
     tag: string;
-    avatar_url?: Buffer;
+    avatar_url?: string;
     createdAt?: string;
 }
