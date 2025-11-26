@@ -28,13 +28,7 @@ export default function Post({ post }: { post: PostType }) {
                                 size={48}
                                 name={post.author.name}
                                 variant="beam"
-                                colors={[
-                                    "#92A1C6",
-                                    "#146A7C",
-                                    "#F0AB3D",
-                                    "#C271B4",
-                                    "#C20D90",
-                                ]}
+                                colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
                             />
                         </div>
                     </div>
