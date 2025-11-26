@@ -64,7 +64,9 @@ export async function editPost(req: JWTRequest, res: Response) {
     const postId = req.params.id
     if (!postId) return res.status(400).json({ error: "Post ID is required" })
 
-    const post = await Post.findById(postId)
+    const post = await Post
+        .findById(postId)
+        .populate("author", "name tag avatar_url")
     if (!post) return res.status(404).json({ error: "Post not found" })
 
     if (!post.author.equals(user._id)) return res.status(403).json({ error: "Not authorized" })

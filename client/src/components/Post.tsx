@@ -5,8 +5,12 @@ import HeartIcon from "./icons/HeartIcon";
 import type { Post as PostType } from "../types/post.types";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";
+import { useToast } from "./Toast";
 
-export default function Post({ post }: { post: PostType }) {
+export default function Post(
+    { post, onEdit }:
+        { post: PostType, onEdit: (post: PostType) => void }
+) {
     const auth = useAuth();
     const [editing, setEditing] = useState(false);
     const canEdit = post.author._id === auth.me._id && !editing;
@@ -56,6 +60,7 @@ export default function Post({ post }: { post: PostType }) {
                 ) : (
                     <EditContent
                         post={post}
+                        onEdit={onEdit}
                         onExit={() => setEditing(false)}
                     />
                 )}
@@ -77,17 +82,38 @@ export default function Post({ post }: { post: PostType }) {
     );
 }
 
-function EditContent({ post, onExit }: { post: PostType, onExit: () => void }) {
+function EditContent(
+    { post, onEdit, onExit }:
+        { post: PostType, onEdit: (post: PostType) => void, onExit: () => void }
+) {
+    const auth = useAuth();
+    const toast = useToast();
     const [pending, setPending] = useState(false);
+    const [content, setContent] = useState(post.content);
+    const canSave = !pending && content !== post.content;
+
     async function onSave() {
         setPending(true);
-        setTimeout(() => {setPending(false); onExit()}, 1500);
+
+        try {
+            const res = await auth.api.patch(`/posts/${post._id}`, { content });
+            onEdit(res.data)
+            onExit();
+        } catch (error) {
+            toast.error(error);
+        }
+
+        setPending(false);
     }
 
     return <div className="mt-2">
-        <textarea className="textarea textarea-bordered w-full" value={post.content} disabled={pending} />
+        <textarea
+            className="textarea textarea-bordered w-full"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            disabled={pending} />
         <div className="flex gap-2 mt-2 justify-end">
-            <button className="btn btn-primary btn-sm" onClick={onSave} disabled={pending}>Save</button>
+            <button className="btn btn-primary btn-sm" onClick={onSave} disabled={!canSave}>Save</button>
             <button className="btn btn-outline btn-sm" onClick={onExit} disabled={pending}>Cancel</button>
         </div>
     </div>;

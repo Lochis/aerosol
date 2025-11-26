@@ -55,6 +55,10 @@ export default function Home() {
         }
     }
 
+    function handlePostEdit(post: PostType) {
+        setPosts(posts.map(p => p._id === post._id ? post : p))
+    }
+
     return (
         <div className="justify-center flex flex-col max-w-xl mx-auto">
             <div>
@@ -65,7 +69,7 @@ export default function Home() {
 
             <div className="py-2">
                 {posts.map((post) => (
-                    <Post key={post._id} post={post} />
+                    <Post key={post._id} post={post} onEdit={handlePostEdit} />
                 ))}
             </div>
         </div>
