@@ -40,6 +40,7 @@ export default function Home() {
         try {
             const response = await auth.api.post("/posts", { content: postContent });
             console.log("Post creation successful:", response.data);
+            setPostContent("");
             await getPosts({});
         } catch (error) {
             toast.error(error);
