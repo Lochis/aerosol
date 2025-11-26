@@ -56,9 +56,7 @@ export default function Post({ post }: { post: PostType }) {
                 {/* Post content */}
                 {!edit ? (
                     <p className="mt-2">
-                        {typeof content === "string"
-                            ? content
-                            : JSON.stringify(content)}
+                        {content}
                     </p>
                 ) : (
                     <div className="mt-2">
