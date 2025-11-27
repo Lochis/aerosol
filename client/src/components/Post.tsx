@@ -17,31 +17,9 @@ export default function Post({
     onDelete: (post: PostType) => void,
     onEdit: (post: PostType) => void,
 }) {
-    const toast = useToast();
     const auth = useAuth();
     const [editing, setEditing] = useState(false);
     const canEdit = post.author._id === auth.me._id && !editing;
-
-    const [likes, setLikes] = useState(post.likes ?? 0);
-    const [liked, setLiked] = useState(
-        post.likedBy?.includes(auth.me._id) ?? false
-    );
-    const [likePending, setLikePending] = useState(false);
-
-    async function handleLike() {
-        if (likePending) return;
-        setLikePending(true);
-
-        try {
-            const res = await auth.api.post(`/posts/${post._id}/like`);
-            setLikes(res.data.likes);
-            setLiked(res.data.liked);
-        } catch (error) {
-            toast.error(error);
-        }
-
-        setLikePending(false);
-    }
 
     return (
         <div className="card bg-base-100 shadow-md border border-base-350 max-w-xl mx-auto mb-4">
@@ -89,16 +67,7 @@ export default function Post({
                     <button className="btn btn-circle btn-ghost">
                         <RepostIcon />
                     </button>
-                    <button
-                        className={`btn btn-circle btn-ghost transition-transform duration-150 active:scale-90 ${liked ? "text-red-500 scale-110" : "scale-100"
-                            }`}
-                        onClick={handleLike}
-                        disabled={likePending}
-                        title={liked ? "Unlike" : "Like"}
-                    >
-                        <HeartIcon />
-                        <span className="ml-1 text-xs">{likes}</span>
-                    </button>
+                    <LikePost post={post} />
                 </div>
             </div>
         </div>
@@ -163,4 +132,36 @@ function EditContent({
             <button className="btn btn-outline btn-sm" onClick={onExit} disabled={pending}>Cancel</button>
         </div>
     </div>;
+}
+
+function LikePost({ post }: { post: PostType }) {
+    const toast = useToast();
+    const auth = useAuth();
+    const [likes, setLikes] = useState(post.likes ?? 0);
+    const [liked, setLiked] = useState(post.likedBy?.includes(auth.me._id) ?? false);
+    const [likePending, setLikePending] = useState(false);
+
+    async function handleLike() {
+        if (likePending) return;
+        setLikePending(true);
+
+        try {
+            const res = await auth.api.post(`/posts/${post._id}/like`);
+            setLikes(res.data.likes);
+            setLiked(res.data.liked);
+        } catch (error) {
+            toast.error(error);
+        }
+
+        setLikePending(false);
+    }
+    return <button
+        className={`btn btn-circle btn-ghost transition-transform duration-150 active:scale-90 ${liked ? "text-red-500 scale-110" : "scale-100"}`}
+        onClick={handleLike}
+        disabled={likePending}
+        title={liked ? "Unlike" : "Like"}
+    >
+        <HeartIcon />
+        <span className="ml-1 text-xs">{likes}</span>
+    </button>;
 }
