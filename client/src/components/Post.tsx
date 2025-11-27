@@ -17,6 +17,7 @@ export default function Post({
     onDelete: (post: PostType) => void,
     onEdit: (post: PostType) => void,
 }) {
+    const toast = useToast();
     const auth = useAuth();
     const [editing, setEditing] = useState(false);
     const canEdit = post.author._id === auth.me._id && !editing;
@@ -36,7 +37,7 @@ export default function Post({
             setLikes(res.data.likes);
             setLiked(res.data.liked);
         } catch (error) {
-            console.error(error);
+            toast.error(error);
         }
 
         setLikePending(false);
