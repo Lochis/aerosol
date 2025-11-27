@@ -13,9 +13,9 @@ export default function Post({
     onDelete,
     onEdit,
 }: {
-    post: PostType;
-    onDelete: (post: PostType) => void;
-    onEdit: (post: PostType) => void;
+    post: PostType,
+    onDelete: (post: PostType) => void,
+    onEdit: (post: PostType) => void,
 }) {
     const auth = useAuth();
     const [editing, setEditing] = useState(false);
@@ -124,10 +124,10 @@ function EditContent({
     onEdit,
     onExit,
 }: {
-    post: PostType;
-    onDelete: (post: PostType) => void;
-    onEdit: (post: PostType) => void;
-    onExit: () => void;
+    post: PostType,
+    onDelete: (post: PostType) => void,
+    onEdit: (post: PostType) => void,
+    onExit: () => void,
 }) {
     const auth = useAuth();
     const toast = useToast();
