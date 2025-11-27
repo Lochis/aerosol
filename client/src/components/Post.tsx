@@ -162,6 +162,6 @@ function LikePost({ post }: { post: PostType }) {
         title={liked ? "Unlike" : "Like"}
     >
         <HeartIcon />
-        <span className="ml-1 text-xs">{likes}</span>
+        <span className="text-xs">{likes}</span>
     </button>;
 }
