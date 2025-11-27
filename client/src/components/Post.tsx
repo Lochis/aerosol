@@ -59,29 +59,20 @@ export default function Post({
                             />
                         </div>
                     </div>
-
                     <div className="flex flex-row w-full justify-between">
                         <div>
                             <h2 className="font-semibold text-sm">{post.author.name}</h2>
-                            <p className="text-xs opacity-60">
-                                @{post.author.tag} · {new Date(post.createdAt).toLocaleString()}
-                            </p>
+                            <p className="text-xs opacity-60">@{post.author.tag} · {new Date(post.createdAt).toLocaleString()}</p>
                         </div>
-
-                        {canEdit && (
-                            <button
-                                className="btn btn-ghost btn-sm btn-outline"
-                                onClick={() => setEditing(true)}
-                            >
-                                Edit
-                            </button>
-                        )}
+                        {canEdit && (<button className="btn btn-ghost btn-sm btn-outline" onClick={() => setEditing(true)}>Edit</button>)}
                     </div>
                 </div>
 
                 {/* Post content */}
                 {!editing ? (
-                    <p className="mt-2">{post.content}</p>
+                    <p className="mt-2">
+                        {post.content}
+                    </p>
                 ) : (
                     <EditContent
                         post={post}
@@ -96,11 +87,9 @@ export default function Post({
                     <button className="btn btn-circle btn-ghost">
                         <CommentIcon />
                     </button>
-
                     <button className="btn btn-circle btn-ghost">
                         <RepostIcon />
                     </button>
-
                     {/* ❤️ LIKE BUTTON WITH TOOLTIP */}
                     <button
                         className={`btn btn-circle btn-ghost transition-transform duration-150 active:scale-90 ${liked ? "text-red-500 scale-110" : "scale-100"
@@ -140,7 +129,7 @@ function EditContent({
 
         try {
             await auth.api.delete(`/posts/${post._id}`);
-            onDelete(post);
+            onDelete(post)
             toast.success(<span>Post deleted successfully.</span>);
             onExit();
         } catch (error) {
@@ -155,7 +144,7 @@ function EditContent({
 
         try {
             const res = await auth.api.patch(`/posts/${post._id}`, { content });
-            onEdit(res.data);
+            onEdit(res.data)
             onExit();
         } catch (error) {
             toast.error(error);
@@ -164,40 +153,16 @@ function EditContent({
         setPending(false);
     }
 
-    return (
-        <div className="mt-2">
-            <textarea
-                className="textarea textarea-bordered w-full"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                disabled={pending}
-            />
-
-            <div className="flex gap-2 mt-2 justify-end">
-                <button
-                    className="btn btn-circle btn-ghost btn-sm opacity-70"
-                    onClick={handleDelete}
-                    disabled={pending}
-                >
-                    <TrashIcon />
-                </button>
-
-                <button
-                    className="btn btn-primary btn-sm"
-                    onClick={handleSave}
-                    disabled={!canSave}
-                >
-                    Save
-                </button>
-
-                <button
-                    className="btn btn-outline btn-sm"
-                    onClick={onExit}
-                    disabled={pending}
-                >
-                    Cancel
-                </button>
-            </div>
+    return <div className="mt-2">
+        <textarea
+            className="textarea textarea-bordered w-full"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            disabled={pending} />
+        <div className="flex gap-2 mt-2 justify-end">
+            <button className="btn btn-circle btn-ghost btn-sm opacity-70" onClick={handleDelete} disabled={pending}><TrashIcon /></button>
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={!canSave}>Save</button>
+            <button className="btn btn-outline btn-sm" onClick={onExit} disabled={pending}>Cancel</button>
         </div>
-    );
+    </div>;
 }
