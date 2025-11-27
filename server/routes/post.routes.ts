@@ -8,6 +8,6 @@ router.get('/posts/user/:id', getPostsByUser)
 router.post('/posts', requireSignin, createPost)
 router.patch('/posts/:id', requireSignin, editPost)
 router.delete('/posts/:id', requireSignin, deletePost)
-router.post("/posts/:id/like", requireSignin, likePost)
+router.post('/posts/:id/like', requireSignin, likePost)
 
 export default router
