@@ -1,57 +1,55 @@
-import axios from "axios"
-import { useNavigate } from "react-router"
-import { useAuth } from "../lib/auth"
-import { createContext, useContext, useEffect } from "react"
-import type { ReactNode } from "react"
+import axios from "axios";
+import { useNavigate } from "react-router";
+import { useAuth } from "../lib/auth";
+import { createContext, useContext, useEffect } from "react";
+import type { ReactNode } from "react";
 
 export function ExpiredSessionToast() {
-  const navigate = useNavigate()
-  const auth = useAuth()
+  const navigate = useNavigate();
+  const auth = useAuth();
 
   function login() {
-    auth.clearAuth()
-    navigate("/auth")
+    auth.clearAuth();
+    navigate("/auth");
   }
 
   return (
     <ErrorToast>
       <span>Your session has expired. Please log in again!</span>
-      <button onClick={login} className="btn btn-sm btn-primary">Login</button>
+      <button onClick={login} className="btn btn-sm btn-primary">
+        Login
+      </button>
     </ErrorToast>
-  )
+  );
 }
 
 export function ErrorToast({ children }: { children: ReactNode }) {
-  const toast = useToast()
+  const toast = useToast();
 
   useEffect(() => {
-    const id = setTimeout(() => toast.clear(), 10000)
-    return () => clearTimeout(id)
-  }, [toast])
+    const id = setTimeout(() => toast.clear(), 10000);
+    return () => clearTimeout(id);
+  }, [toast]);
 
   return (
     <div className="toast toast-top toast-center">
-      <div className="alert alert-error">
-        {children}
-      </div>
+      <div className="alert alert-error">{children}</div>
     </div>
-  )
+  );
 }
 
 export function SuccessToast({ children }: { children: ReactNode }) {
-  const toast = useToast()
+  const toast = useToast();
   useEffect(() => {
-    const id = setTimeout(() => toast.clear(), 5000)
-    return () => clearTimeout(id)
-  }, [toast])
+    const id = setTimeout(() => toast.clear(), 5000);
+    return () => clearTimeout(id);
+  }, [toast]);
 
   return (
     <div className="toast toast-top toast-center">
-      <div className="alert alert-success">
-        {children}
-      </div>
+      <div className="alert alert-success">{children}</div>
     </div>
-  )
+  );
 }
 
 export class Toast {
@@ -66,36 +64,44 @@ export class Toast {
       <SuccessToast>
         {typeof message === "string" ? <span>{message}</span> : message}
       </SuccessToast>
-    )
+    );
 
-    this.setNode(toast)
+    this.setNode(toast);
   }
 
   error(error: any) {
     let toast = (
       <ErrorToast>
-        <span>Something went wrong: {error.message || error}</span>
+        <span>Something went wrong: {error.message || String(error)}</span>
       </ErrorToast>
-    )
+    );
 
-    if (axios.isAxiosError(error) && error.config?.baseURL == process.env.CLIENT_API_BASE) {
-      let message = error.response?.data?.error?.message || error.response?.data?.error
-      const messageString = message ? String(message) : ""
+    if (axios.isAxiosError(error)) {
+      let message =
+        error.response?.data?.error?.message || error.response?.data?.error;
+      const messageString = message ? String(message) : "";
 
-      if (error.status == 401 && messageString.startsWith("UnauthorizedError")) {
-        toast = <ExpiredSessionToast />
+      if (
+        error.status == 401 &&
+        messageString.startsWith("UnauthorizedError")
+      ) {
+        toast = <ExpiredSessionToast />;
       } else if (messageString) {
-        toast = <ErrorToast><span>{messageString}</span></ErrorToast>
+        toast = (
+          <ErrorToast>
+            <span>{messageString}</span>
+          </ErrorToast>
+        );
       }
     }
 
-    this.setNode(toast)
+    this.setNode(toast);
   }
 
   clear() {
-    this.setNode(null)
+    this.setNode(null);
   }
 }
 
 export const ToastContext = createContext<Toast | null>(null);
-export const useToast = () => useContext(ToastContext)!
+export const useToast = () => useContext(ToastContext)!;
