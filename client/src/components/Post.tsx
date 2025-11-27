@@ -21,14 +21,12 @@ export default function Post({
     const [editing, setEditing] = useState(false);
     const canEdit = post.author._id === auth.me._id && !editing;
 
-    // ❤️ NEW LIKE STATES
     const [likes, setLikes] = useState(post.likes ?? 0);
     const [liked, setLiked] = useState(
         post.likedBy?.includes(auth.me._id) ?? false
     );
     const [likePending, setLikePending] = useState(false);
 
-    // ❤️ HANDLE LIKE
     async function handleLike() {
         if (likePending) return;
         setLikePending(true);
@@ -90,7 +88,6 @@ export default function Post({
                     <button className="btn btn-circle btn-ghost">
                         <RepostIcon />
                     </button>
-                    {/* ❤️ LIKE BUTTON WITH TOOLTIP */}
                     <button
                         className={`btn btn-circle btn-ghost transition-transform duration-150 active:scale-90 ${liked ? "text-red-500 scale-110" : "scale-100"
                             }`}
