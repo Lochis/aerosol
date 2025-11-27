@@ -139,11 +139,11 @@ function LikePost({ post }: { post: PostType }) {
     const auth = useAuth();
     const [likes, setLikes] = useState(post.likes ?? 0);
     const [liked, setLiked] = useState(post.likedBy?.includes(auth.me._id) ?? false);
-    const [likePending, setLikePending] = useState(false);
+    const [pending, setPending] = useState(false);
 
     async function handleLike() {
-        if (likePending) return;
-        setLikePending(true);
+        if (pending) return;
+        setPending(true);
 
         try {
             const res = await auth.api.post(`/posts/${post._id}/like`);
@@ -153,12 +153,12 @@ function LikePost({ post }: { post: PostType }) {
             toast.error(error);
         }
 
-        setLikePending(false);
+        setPending(false);
     }
     return <button
         className={`btn btn-circle btn-ghost transition-transform duration-150 active:scale-90 ${liked ? "text-red-500 scale-110" : "scale-100"}`}
         onClick={handleLike}
-        disabled={likePending}
+        disabled={pending}
         title={liked ? "Unlike" : "Like"}
     >
         <HeartIcon />
