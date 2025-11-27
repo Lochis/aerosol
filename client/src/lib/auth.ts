@@ -2,10 +2,7 @@ import axios from "axios";
 import { createContext, useContext, useState } from "react";
 import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 
-console.log("import.meta.env =", import.meta.env);
-console.log("VITE_API_BASE =", (import.meta as any).env?.VITE_API_BASE);
-
-const BASE_URL = (import.meta as any).env?.VITE_API_BASE ?? "http://localhost:3000/api";
+const BASE_URL = `${process.env.CLIENT_API_BASE}`;
 const SUB_KEY = "sub";
 const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
