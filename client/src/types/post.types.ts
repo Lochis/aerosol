@@ -1,17 +1,15 @@
-export type Post = {
-  _id: string;
-  content: string;
-
-  author: {
+export interface Post {
     _id: string;
-    name: string;
-    tag: string;
-  };
+    author: {
+        _id: string;
+        name: string;
+        tag: string;
+        avatar_url?: string;
+    };
+    content: string;
+    createdAt: string;
+    updatedAt: string;
 
-  createdAt: string;
-  updatedAt: string;
-
-  // Like system
-  likes?: number;
-  likedBy?: string[];
-};
+    likes?: number;
+    likedBy?: string[];
+}
