@@ -1,6 +1,46 @@
+import type { Channel } from "../types/channel.types.ts";
+import Channel from "./Channel/Channel.tsx";
+import ChannelCreateModal from "./Channel/ChannelCreateModal.tsx";
+import { useState } from "react";
+
 export default function ChatDrawer(htmlFor: string) {
+  const [channels, setChannels] = useState<Channel[]>([]);
+
+  const createChannel = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const type = formData.get("type") as string;
+    const searchUser = formData.get("searchUser") as string;
+
+    console.log("Create channel");
+    const channel: Channel = {
+      name: type === 'dm' ? searchUser : name,
+      type: type,
+      members: [searchUser],
+    };
+    console.log(channel);
+
+    // create, get the channel back from server to set Channels state
+    
+  };
+
+  const onOpen = () => {
+    console.log("Open channel");
+    const channel: Channel = {
+      id: "1",
+      name: "General",
+      type: "channel",
+    };
+    console.log(channel);
+  };
+
   return (
     <div className="drawer">
+      <ChannelCreateModal
+        modalID="channel-create-modal"
+        onCreate={createChannel}
+      />
       <input id={htmlFor} type="checkbox" className="drawer-toggle" />
       <div className="drawer-content">
         <label
@@ -34,7 +74,13 @@ export default function ChatDrawer(htmlFor: string) {
         <ul className="menu bg-base-200 text-lg min-h-full w-80 p-4">
           <div className="flex flex-row justify-between items-center w-full">
             <h3 className="text-2xl font-bold">Messages</h3>
-            <button className="btn btn-primary btn-circle w-8 h-8">
+
+            <button
+              className="btn btn-primary btn-circle w-8 h-8"
+              onClick={() =>
+                document.getElementById("channel-create-modal").showModal()
+              }
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -52,7 +98,6 @@ export default function ChatDrawer(htmlFor: string) {
             </button>
           </div>
           <div className="divider"></div>
-          {/* Sidebar content here */}
           <li>
             <a>#TypeScript</a>
           </li>
