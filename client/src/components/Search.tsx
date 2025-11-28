@@ -17,11 +17,14 @@ export default function Search({
   const auth = useAuth();
   const [searchUsers, setSearchUsers] = useState<ReducedUsers[]>([]);
   const [search, setSearch] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleChange = (e: any) => {
-    setSearch(e.target.value);
-    getUsers(e.target.value);
+    const userTag = e.target.value;
+    setSearch(userTag);
+    setSelectedId("");
+    getUsers(userTag);
   };
 
   const getUsers = async (search: string) => {
@@ -41,16 +44,16 @@ export default function Search({
   };
 
   const handleSelect = (user: ReducedUsers) => {
+
+    setSearch(user.tag);
+    setSelectedId(user._id);
+    setSearchUsers([]);
+
     // if consumer wants navigation (default), navigate to profile
     if (navigateOnSelect) {
       navigate(`/profile/${user.tag}`);
-      setSearchUsers([]);
-      return;
-    } else {
-        setSearchUsers([]);
     }
-
-    // otherwise just set the input value to the chosen user's tag
+    
     setSearch(user.tag);
   };
 
@@ -79,13 +82,15 @@ export default function Search({
         </svg>
         <input
           type="text"
-          name="searchUser"
           className="grow w-full"
           placeholder="Search"
           value={search}
-          onClick={(e) => handleChange(e)}
-          onChange={(e) => handleChange(e)}
+          onClick={handleChange}
+          onChange={handleChange}
         />
+
+        {/* hidden input with the selected user's id — this is what the form will submit */}
+        <input type="hidden" name="searchUser" value={selectedId} />
       </label>
 
       {searchUsers.length > 0 && (
