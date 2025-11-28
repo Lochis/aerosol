@@ -34,7 +34,7 @@ const UserSchema = new mongoose.Schema({
   passwordHash: {
     type: String,
     required: [true, 'Password is required']
-  }
+  },
 });
 
 UserSchema.virtual('password')

@@ -79,8 +79,8 @@ export default function Profile() {
         try {
             const response = await auth.api.delete("/me");
             console.log("Account deletion successful:", response.data);
-            auth.clearAuth();
             navigate("/auth");
+            auth.clearAuth();
         } catch (error) {
             toast.error(error);
         }
