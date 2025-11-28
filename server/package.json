@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@socket.io/bun-engine": "^0.1.0",
     "body-parser": "^2.2.0",
     "compress": "^0.99.0",
     "compression": "^1.8.1",
@@ -26,6 +27,7 @@
     "lodash": "^4.17.21",
     "mongodb": "^7.0.0",
     "mongoose": "^8.20.1",
+    "socket.io": "^4.8.1",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
