@@ -1,7 +1,9 @@
 import User from '../models/user.model.js'
+import Post from '../models/post.model.js'
 import extend from 'lodash/extend.js'
 import type { Request as JWTRequest } from "express-jwt"
 import type { NextFunction, Response } from 'express'
+import mongoose from 'mongoose'
 
 type UserRequest = JWTRequest & {
   profile?: any
@@ -50,9 +52,18 @@ const create = async (req: JWTRequest, res: Response) => {
 const list = async (req: JWTRequest, res: Response) => {
   try {
     let filter = {
-      "tag": {
-        $regex: `^${req.query.search}`,
-      }
+      $and: [
+        {
+          "tag": {
+            $regex: `^${req.query.search}`,
+          }
+        },
+        {
+          "tag": {
+            $ne: "_deleted",
+          }
+        }
+      ]
     }
     let users = await User.find(filter).select('_id name tag')
     console.log(users);
@@ -65,27 +76,27 @@ const list = async (req: JWTRequest, res: Response) => {
 }
 
 const userByTag = async (req: UserRequest, res: Response, next: NextFunction, tag: string) => {
-    try {
-        let user = await User.findOne({ tag: tag })
-        if (!user)
-            return res.status(400).json({
-                error: "User not found"
-            })
-        req.profile = user
-        console.log("Request profile set to:", req.profile);
-        next()
-    } catch (err) {
-        return res.status(400).json({
-            error: "Could not retrieve user"
-        })
-    }
+  try {
+    let user = await User.findOne({ tag: tag })
+    if (!user)
+      return res.status(400).json({
+        error: "User not found"
+      })
+    req.profile = user
+    console.log("Request profile set to:", req.profile);
+    next()
+  } catch (err) {
+    return res.status(400).json({
+      error: "Could not retrieve user"
+    })
+  }
 }
 const read = (req: UserRequest, res: Response) => {
   console.log("Read request for user:", req.profile);
-    req.profile.passwordHash = undefined
-    req.profile.email = undefined
-    //console.log("Read user:", req.profile);
-    return res.json(req.profile)
+  req.profile.passwordHash = undefined
+  req.profile.email = undefined
+  //console.log("Read user:", req.profile);
+  return res.json(req.profile)
 }
 
 
@@ -117,6 +128,34 @@ const remove = async (req: JWTRequest, res: Response) => {
   console.log("Delete request received for user:", req.auth?.sub);
   try {
     let user = await User.findById(req.auth?.sub);
+
+    const placeholderDeletedUser = await User.findOneAndUpdate(
+      { tag: "_deleted" },
+      {
+        $setOnInsert: {
+          email: "deleted",
+          name: "deleted",
+          tag: "_deleted",
+          avatar_url: "",
+          createdAt: new Date(),
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+
+    if (user) {
+      let postFilter = { author: user?._id };
+      await Post.updateMany(postFilter, { $set: { 
+        author: placeholderDeletedUser._id, 
+        email: placeholderDeletedUser.email, 
+        name: placeholderDeletedUser.name, 
+        tag: placeholderDeletedUser.tag, 
+        avatar_url: placeholderDeletedUser.avatar_url, 
+      } });
+    }
+
+
     let deletedUser = await user?.deleteOne()
     res.json(deletedUser)
   } catch (err) {

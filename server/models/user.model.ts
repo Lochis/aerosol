@@ -20,6 +20,7 @@ const UserSchema = new mongoose.Schema({
   tag: {
     type: String,
     trim: true,
+    unique: [true, 'Tag already exists'],
     required: [true, 'Tag is required'],
     maxLength: 32,
   },
@@ -34,7 +35,7 @@ const UserSchema = new mongoose.Schema({
   passwordHash: {
     type: String,
     required: [true, 'Password is required']
-  }
+  },
 });
 
 UserSchema.virtual('password')

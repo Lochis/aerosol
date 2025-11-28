@@ -20,6 +20,7 @@ export async function login(req: JWTRequest, res: Response) {
                 }
             });
         }
+
         // call user's authenticate method if available
         const authFn = (user as any).authenticate;
         if (typeof authFn === "function") {
@@ -79,6 +80,17 @@ export async function signup(req: JWTRequest, res: Response) {
                     message: "Email is already registered"
                 }
             });
+        }
+
+        const existingTag = await User.findOne({ tag: req.body.tag });
+        if (existingTag) {
+            return res.status(400).json({
+                status: "error",
+                error: {
+                    code: "DUPLICATE_TAG",
+                    message: "Tag is already in use. Please pick a different one."
+                }
+            })
         }
 
         req.body.email = email;
