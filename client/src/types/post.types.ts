@@ -8,4 +8,8 @@ export interface Post {
     };
     content: string;
     createdAt: string;
+    updatedAt: string;
+
+    likes?: number;
+    likedBy?: string[];
 }
