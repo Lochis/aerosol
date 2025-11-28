@@ -1,4 +1,6 @@
 import config from "./config/config.ts";
+import http from "http";
+import {Server as socketServer} from "socket.io";
 import app from "./express.ts";
 import mongoose from "mongoose";
 
@@ -18,7 +20,35 @@ mongoose.connection.on("error", () => {
   throw new Error(`unable to connect to database: ${config.mongoUri}`);
 });
 
-app.listen(config.port, (err: any) => {
+const server = http.createServer(app);
+
+export const io = new socketServer(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected:", socket.id);
+
+  socket.on("join", (roomId) => {
+    socket.join(roomId);
+    console.log(`user ${socket.id} joined room: ${roomId}`);
+  });
+
+  socket.on("message", (data) => {
+    const { roomId, message } = data;
+    console.log(`message from ${socket.id} to room ${roomId}: ${message}`);
+    io.to(roomId).emit("message", { sender: socket.id, message });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected:", socket.id);
+  });
+});
+
+server.listen(config.port, (err: any) => {
   if (err) {
     console.log(err);
   }
