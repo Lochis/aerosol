@@ -2,6 +2,7 @@ import Avatar from "boring-avatars";
 import { useAuth } from "../lib/auth";
 import { useNavigate, Link } from "react-router";
 import { useState } from "react";
+import ChatDrawer from "./ChatDrawer.tsx";
 
 export default function NavBar() {
   const auth = useAuth();
@@ -42,11 +43,9 @@ export default function NavBar() {
     <div className="navbar bg-base-100 shadow-sm">
 
       <div className="grid grid-cols-3 w-full justify-items-center">
-        <div>
-          {/* Hamburger icon*/}
-          <button className="btn btn-square btn-ghost">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block h-5 w-5 stroke-current"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path> </svg>
-          </button>
+        <div className="flex flex-row">
+          
+          <ChatDrawer htmlFor="my-drawer-1" />
 
           <Link className="btn btn-ghost text-xl" to="/">Aerosol</Link>
         </div>
