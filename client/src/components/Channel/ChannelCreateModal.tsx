@@ -40,7 +40,7 @@ export default function ChannelCreateModal({
           </select>
 
           {isDM && <Search navigateOnSelect={false} />}
-          <button className="btn btn-ghost">Create</button>
+          <button className="btn btn-primary">Create</button>
         </form>
       </div>
     </dialog>
