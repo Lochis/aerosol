@@ -1,12 +1,30 @@
 import type { Channel } from "../types/channel.types.ts";
 import Channel from "./Channel/Channel.tsx";
 import ChannelCreateModal from "./Channel/ChannelCreateModal.tsx";
-import { useState } from "react";
+import { useAuth } from "../lib/auth.ts";
+import { useState, useEffect } from "react";
+import { useToast } from "./Toast";
 
 export default function ChatDrawer(htmlFor: string) {
+  const auth = useAuth();
+  const toast = useToast();
   const [channels, setChannels] = useState<Channel[]>([]);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const createChannel = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    getChannels();
+  }, [drawerOpen]);
+  
+  const getChannels = async () => {
+    try {
+      const response = await auth.client.get("/channel");
+      setChannels(response.data);
+    } catch (error) {
+      toast.error(error);
+    }
+  }
+
+  const createChannel = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
@@ -15,14 +33,20 @@ export default function ChatDrawer(htmlFor: string) {
 
     console.log("Create channel");
     const channel: Channel = {
-      name: type === 'dm' ? searchUser : name,
+      name: type === "dm" ? searchUser : name,
       type: type,
       members: [searchUser],
     };
-    console.log(channel);
 
-    // create, get the channel back from server to set Channels state
-    
+    try {
+      // create, get the channel back from server to set Channels state
+      await auth.client.post("/channel", channel, {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      toast.error(error);
+    }
+    await getChannels();
   };
 
   const onOpen = () => {
@@ -41,7 +65,12 @@ export default function ChatDrawer(htmlFor: string) {
         modalID="channel-create-modal"
         onCreate={createChannel}
       />
-      <input id={htmlFor} type="checkbox" className="drawer-toggle" />
+      <input
+        id={htmlFor}
+        onChange={() => setDrawerOpen(!drawerOpen)}
+        type="checkbox"
+        className="drawer-toggle"
+      />
       <div className="drawer-content">
         <label
           htmlFor={htmlFor}
@@ -98,12 +127,11 @@ export default function ChatDrawer(htmlFor: string) {
             </button>
           </div>
           <div className="divider"></div>
-          <li>
-            <a>#TypeScript</a>
-          </li>
-          <li>
-            <a>#React</a>
-          </li>
+          {channels.map((channel) => (
+            <li key={channel.id}>
+              <Channel channel={channel} onOpen={onOpen} />
+            </li>
+          ))}
         </ul>
       </div>
     </div>

@@ -14,14 +14,13 @@ export default function ChannelCreateModal({
 
   return (
     <dialog id={modalID} className="modal modal-top sm:modal-middle">
-      <div className="modal-box min-h-100">
+      <div className="modal-box min-h-120">
         <h2 className="font-bold">Create Channel</h2>
         <form
           className="mt-4 flex flex-col gap-2"
           method="dialog"
           onSubmit={onCreate}
         >
-          
           <input
             className="input w-full"
             name="name"
@@ -43,6 +42,9 @@ export default function ChannelCreateModal({
           <button className="btn btn-primary">Create</button>
         </form>
       </div>
+      <form method="dialog" className="modal-backdrop">
+        <button>close</button>
+      </form>
     </dialog>
   );
 }
