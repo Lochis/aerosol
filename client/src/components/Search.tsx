@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { useAuth } from "../lib/auth.ts";
 import Avatar from "boring-avatars";
 import { useNavigate } from "react-router";
@@ -20,7 +20,7 @@ export default function Search({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const userTag = e.target.value;
     setSearch(userTag);
     setSelectedId("");
@@ -53,7 +53,7 @@ export default function Search({
     if (navigateOnSelect) {
       navigate(`/profile/${user.tag}`);
     }
-    
+
     setSearch(user.tag);
   };
 
