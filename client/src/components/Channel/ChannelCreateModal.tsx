@@ -39,7 +39,7 @@ export default function ChannelCreateModal({
           </select>
 
           {isDM && <Search navigateOnSelect={false} />}
-          <button className="btn btn-primary">Create</button>
+          <button className="btn btn-primary w-full">Create</button>
         </form>
       </div>
       <form method="dialog" className="modal-backdrop">
