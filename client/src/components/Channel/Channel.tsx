@@ -2,14 +2,14 @@ import Avatar from "boring-avatars";
 import type { Channel } from "./types/channel.types";
 export default function Channel({
   channel,
-  onOpen,
+  onOpenChannel,
 }: {
   channel: Channel;
-  onOpen: (channel: Channel) => void;
+  onOpenChannel: (channel: Channel) => void;
 }) {
   const isDM = channel.type === "dm";
   return (
-    <button className="btn btn-outline rounded-xl" onClick={() => onOpen(channel)}>
+    <button className="btn btn-outline rounded-xl" onClick={() => onOpenChannel(channel)}>
       <Avatar
         size={32}
         name={channel.members[0].name}
