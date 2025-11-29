@@ -32,15 +32,17 @@ export const io = new socketServer(server, {
 io.on("connection", (socket) => {
   console.log("a user connected:", socket.id);
 
-  socket.on("join", (roomId) => {
-    socket.join(roomId);
-    console.log(`user ${socket.id} joined room: ${roomId}`);
+  socket.on("join", (channelId) => {
+    socket.join(channelId);
+    console.log(`user ${socket.id} joined channel: ${channelId}`);
   });
 
   socket.on("message", (data) => {
-    const { roomId, message } = data;
-    console.log(`message from ${socket.id} to room ${roomId}: ${message}`);
-    io.to(roomId).emit("message", { sender: socket.id, message });
+    console.log(data);
+    const {channelId, msg} = data;
+    
+    console.log(`message from ${socket.id} to channel ${channelId}: ${msg}`);
+    io.to(channelId).emit("message", { sender: socket.id, msg });
   });
 
   socket.on("disconnect", () => {
