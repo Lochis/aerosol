@@ -20,7 +20,7 @@ export default function Search({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     const userTag = e.target.value;
     setSearch(userTag);
     setSelectedId("");
