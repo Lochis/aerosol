@@ -1,8 +1,8 @@
 import config from "./config/config.ts";
 import http from "http";
-import {Server as socketServer} from "socket.io";
 import app from "./express.ts";
 import mongoose from "mongoose";
+import { initSocket } from "./socket.ts";
 
 mongoose.Promise = global.Promise;
 mongoose
@@ -22,33 +22,7 @@ mongoose.connection.on("error", () => {
 
 const server = http.createServer(app);
 
-export const io = new socketServer(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
-
-io.on("connection", (socket) => {
-  console.log("a user connected:", socket.id);
-
-  socket.on("join", (channelId) => {
-    socket.join(channelId);
-    console.log(`user ${socket.id} joined channel: ${channelId}`);
-  });
-
-  socket.on("message", (data) => {
-    console.log(data);
-    const {channelId, msg} = data;
-    
-    console.log(`message from ${socket.id} to channel ${channelId}: ${msg}`);
-    io.to(channelId).emit("message", { sender: socket.id, msg });
-  });
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected:", socket.id);
-  });
-});
+export const io = initSocket(server);
 
 server.listen(config.port, (err: any) => {
   if (err) {
