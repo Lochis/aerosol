@@ -1,8 +1,12 @@
 import type { Channel } from "../types/channel.types.ts";
 import Channel from "./Channel/Channel.tsx";
 import ChannelCreateModal from "./Channel/ChannelCreateModal.tsx";
+import ChatModal from "./Channel/ChatModal.tsx";
+import HamburgerIcon from "./icons/HamburgerIcon.tsx";
+import PlusIcon from "./icons/PlusIcon.tsx";
+import {io, Socket} from "socket.io-client";
 import { useAuth } from "../lib/auth.ts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "./Toast";
 
 export default function ChatDrawer(htmlFor: string) {
@@ -10,19 +14,47 @@ export default function ChatDrawer(htmlFor: string) {
   const toast = useToast();
   const [channels, setChannels] = useState<Channel[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeChat, setActiveChat] = useState<Channel | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
-  useEffect(() => {
-    getChannels();
-  }, [drawerOpen]);
-  
-  const getChannels = async () => {
+
+ const getChannels = async () => {
     try {
       const response = await auth.client.get("/channel");
       setChannels(response.data);
     } catch (error) {
       toast.error(error);
     }
-  }
+  };
+
+  useEffect(() => {
+
+  getChannels();
+
+  if (socketRef.current) return;
+
+    const socket = io("http://localhost:3000", {
+      transports: [
+      "websocket"
+    ]});
+
+    socketRef.current = socket;
+
+    socket.on("connect", () => console.info("socket connected", socket.id));
+
+    socket.on("message", (msg: any) => {
+      console.log(msg);
+    });
+
+    socket.on("connect_error", (err) => console.warn("socket connect_error", err));
+    
+    return () => {
+      socket.disconnect();
+      socketRef.current = null;
+    }
+
+  }, []);
+ 
 
   const createChannel = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,7 +71,7 @@ export default function ChatDrawer(htmlFor: string) {
     };
 
     try {
-      // create, get the channel back from server to set Channels state
+      // create
       await auth.client.post("/channel", channel, {
         headers: { "Content-Type": "application/json" },
       });
@@ -49,14 +81,30 @@ export default function ChatDrawer(htmlFor: string) {
     await getChannels();
   };
 
-  const onOpen = () => {
-    console.log("Open channel");
-    const channel: Channel = {
-      id: "1",
-      name: "General",
-      type: "channel",
+  const onOpenChannel = (channel: Channel) => {
+    document.getElementById("chat-modal").showModal();
+    setActiveChat(channel);
+
+    const socket = socketRef.current;
+    if(socket && socket.connected) {
+      socket.emit("join", channel._id);
+    }
+  };
+
+  const sendMessage = async (msg: string) => {
+    console.log(activeChat);
+    if (!activeChat) return;
+    const socket = socketRef.current;
+    const payload = {
+      channelId: activeChat._id,
+      msg: msg,
     };
-    console.log(channel);
+
+    if(socket && socket.connected) {
+      socket.emit("message", payload);
+      return;
+    }
+    
   };
 
   return (
@@ -65,6 +113,7 @@ export default function ChatDrawer(htmlFor: string) {
         modalID="channel-create-modal"
         onCreate={createChannel}
       />
+      <ChatModal modalID="chat-modal" sendMessage={sendMessage} />
       <input
         id={htmlFor}
         onChange={() => setDrawerOpen(!drawerOpen)}
@@ -76,21 +125,7 @@ export default function ChatDrawer(htmlFor: string) {
           htmlFor={htmlFor}
           className="btn btn-square btn-ghost drawer-button"
         >
-          {/* Hamburger icon*/}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="inline-block h-5 w-5 stroke-current"
-          >
-            {" "}
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            ></path>{" "}
-          </svg>
+          <HamburgerIcon />
         </label>
       </div>
       <div className="drawer-side">
@@ -110,26 +145,13 @@ export default function ChatDrawer(htmlFor: string) {
                 document.getElementById("channel-create-modal").showModal()
               }
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
+              <PlusIcon />
             </button>
           </div>
           <div className="divider"></div>
           {channels.map((channel) => (
-            <li key={channel.id}>
-              <Channel channel={channel} onOpen={onOpen} />
+            <li key={channel._id}>
+              <Channel channel={channel} isUserOwner={channel.owner === auth.me._id} onOpenChannel={() => onOpenChannel(channel)} />
             </li>
           ))}
         </ul>
