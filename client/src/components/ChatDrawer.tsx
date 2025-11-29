@@ -1,10 +1,11 @@
 import type { Channel } from "../types/channel.types.ts";
+import type { Message } from "../types/message.types.ts";
 import Channel from "./Channel/Channel.tsx";
 import ChannelCreateModal from "./Channel/ChannelCreateModal.tsx";
 import ChatModal from "./Channel/ChatModal.tsx";
 import HamburgerIcon from "./icons/HamburgerIcon.tsx";
 import PlusIcon from "./icons/PlusIcon.tsx";
-import {io, Socket} from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { useAuth } from "../lib/auth.ts";
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "./Toast";
@@ -16,9 +17,9 @@ export default function ChatDrawer(htmlFor: string) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeChat, setActiveChat] = useState<Channel | null>(null);
   const socketRef = useRef<Socket | null>(null);
+  const [messagesByChannel, setMessagesByChannel] = useState<Map<Channel._id, Message[]>>(new Map());
 
-
- const getChannels = async () => {
+  const getChannels = async () => {
     try {
       const response = await auth.client.get("/channel");
       setChannels(response.data);
@@ -28,33 +29,32 @@ export default function ChatDrawer(htmlFor: string) {
   };
 
   useEffect(() => {
+    getChannels();
 
-  getChannels();
-
-  if (socketRef.current) return;
+    if (socketRef.current) return;
 
     const socket = io("http://localhost:3000", {
-      transports: [
-      "websocket"
-    ]});
+      auth: { token: auth.me._id },
+      transports: ["websocket"],
+    });
 
     socketRef.current = socket;
 
     socket.on("connect", () => console.info("socket connected", socket.id));
 
     socket.on("message", (msg: any) => {
-      console.log(msg);
+      console.log("The returned message", msg)
     });
 
-    socket.on("connect_error", (err) => console.warn("socket connect_error", err));
-    
+    socket.on("connect_error", (err) =>
+      console.warn("socket connect_error", err)
+    );
+
     return () => {
       socket.disconnect();
       socketRef.current = null;
-    }
-
+    };
   }, []);
- 
 
   const createChannel = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -86,13 +86,13 @@ export default function ChatDrawer(htmlFor: string) {
     setActiveChat(channel);
 
     const socket = socketRef.current;
-    if(socket && socket.connected) {
+    if (socket && socket.connected) {
       socket.emit("join", channel._id);
     }
   };
 
   const sendMessage = async (msg: string) => {
-    console.log(activeChat);
+    console.log("From sendmessage", activeChat);
     if (!activeChat) return;
     const socket = socketRef.current;
     const payload = {
@@ -100,11 +100,10 @@ export default function ChatDrawer(htmlFor: string) {
       msg: msg,
     };
 
-    if(socket && socket.connected) {
+    if (socket && socket.connected) {
       socket.emit("message", payload);
       return;
     }
-    
   };
 
   return (
@@ -151,7 +150,12 @@ export default function ChatDrawer(htmlFor: string) {
           <div className="divider"></div>
           {channels.map((channel) => (
             <li key={channel._id}>
-              <Channel channel={channel} isUserOwner={channel.owner === auth.me._id} onOpenChannel={() => onOpenChannel(channel)} />
+              <Channel
+                channel={channel}
+                isUserOwner={channel.owner === auth.me._id}
+                onOpenChannel={() => onOpenChannel(channel)}
+                messagesByChannel={messagesByChannel.get(channel._id) || []}
+              />
             </li>
           ))}
         </ul>

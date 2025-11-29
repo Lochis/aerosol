@@ -1,19 +1,33 @@
+import type { Message } from "../../types/message.types.ts";
+
 export default function ChatModal({
   modalID,
   sendMessage,
-}  : {
+  messagesByChannel,
+}: {
   modalID: string;
   sendMessage: (msg: string) => void;
+  messagesByChannel: Message[];
 }) {
-
- return (
+  return (
     <dialog id={modalID} className="modal modal-bottom">
       <div className="modal-box lg:min-h-150 min-h-screen">
+        {messagesByChannel ? (
+          messagesByChannel.map((message, index) => (
+            <>
+              <div className="text9xl font-bold">HELLO</div>
+              <div key={index} className="chat-message">
+                <div className="chat-bubble">{message.msg}</div>
+              </div>
+            </>
+          ))
+        ) : (
+          <div>No messages</div>
+        )}
         <button
           type="button"
           className="btn btn-primary"
           onClick={() => {
-            console.log("chat modal test button clicked, sendMessage:", !!sendMessage);
             sendMessage?.("hello Test");
           }}
         >
