@@ -9,10 +9,10 @@ export async function createChannel(req: JWTRequest, res: Response) {
     // Create channel logic
     const { name, type, members } = req.body
 
-    const existingChannel = await Channel.findOne({ name, type, owner: req.auth.sub })
-    if (type == "dm" && existingChannel){
+    const existingChannel = await Channel.findOne({owner: req.auth.sub, members: { $all: members }, type: type})
+    if (type === "dm" && existingChannel){
         return res.status(409).json({ error: "Direct message channel already exists" })
-    } else {
+    } else if (type === "channel" && existingChannel){
        return res.status(409).json({ error: "Channel already exists" })
     }
 
@@ -30,7 +30,9 @@ export async function createChannel(req: JWTRequest, res: Response) {
 export async function getChannels(req: JWTRequest, res: Response){
     if (!req.auth?.sub) return res.status(401).json({ error: "Not authenticated" })
 
-    const channels = await Channel.find({ members: req.auth.sub }).populate('members', 'tag name _id avatar_url')
+    const channels = await Channel.find({ $or: [{ owner: req.auth.sub }, { members: req.auth.sub }] })
+    .populate('members', 'tag name _id avatar_url')
+    .populate('owner', 'tag name _id avatar_url')
 
     res.status(200).json(channels)
 }
