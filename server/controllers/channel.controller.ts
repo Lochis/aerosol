@@ -8,7 +8,6 @@ export async function createChannel(req: JWTRequest, res: Response) {
 
     // Create channel logic
     const { name, type, members } = req.body
-    members.push(req.auth.sub) // add creator to members
 
     const existingChannel = await Channel.findOne({ name, type, owner: req.auth.sub })
     if (type == "dm" && existingChannel){
