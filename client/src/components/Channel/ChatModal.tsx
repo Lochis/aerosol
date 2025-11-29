@@ -1,38 +1,91 @@
-import type { Message } from "../../types/message.types.ts";
+import type { IMessage } from "../../types/message.types.ts";
+import Avatar from "boring-avatars";
+import SendIcon from "../icons/SendIcon.tsx";
+import { useEffect, useRef, useState } from "react";
+import type { User } from "../../types/user.types.ts";
 
 export default function ChatModal({
   modalID,
   sendMessage,
-  messagesByChannel,
+  messages,
+  userId,
 }: {
   modalID: string;
   sendMessage: (msg: string) => void;
-  messagesByChannel: Message[];
+  messages?: IMessage[];
+  userId: User["_id"];
 }) {
+  const [sendMsg, setSendMsg] = useState("");
+  const messageEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <dialog id={modalID} className="modal modal-bottom">
-      <div className="modal-box lg:min-h-150 min-h-screen">
-        {messagesByChannel ? (
-          messagesByChannel.map((message, index) => (
-            <>
-              <div className="text9xl font-bold">HELLO</div>
-              <div key={index} className="chat-message">
+    <dialog id={modalID} className="modal">
+      <div className="modal-box max-w-4xl lg:max-h-170">
+        <form method="dialog">
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            ✕
+          </button>
+        </form>
+        <div className="text-xl font-bold">Chat</div>
+        <div className="overflow-y-auto max-h-130 mt-4 mb-4 bg-base-200 p-2 rounded-lg [overflow-anchor:none]">
+          {messages && messages.length > 0 ? (
+            messages.map((message) => (
+              <div className={`chat ${message.author._id === userId ? "chat-end" : "chat-start"}`} key={message._id}>
+                <div className="chat-image avatar">
+                  <div className="w-10 rounded-full">
+                    <Avatar
+                      size={40}
+                      name={message.author.name}
+                      variant="beam"
+                    />
+                  </div>
+                </div>
+                <div className={`chat-header gap-2 flex ${message.author._id === userId ? "flex-row-reverse" : ""}`}>
+                  <span className="text-xs">{message.author.tag}</span>
+                  <time className="text-xs opacity-50 mb-1">
+                    {new Date(message.createdAt).toDateString() + " " + new Date(message.createdAt).toLocaleTimeString()}
+                  </time>
+                </div>
                 <div className="chat-bubble">{message.msg}</div>
               </div>
-            </>
-          ))
-        ) : (
-          <div>No messages</div>
-        )}
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => {
-            sendMessage?.("hello Test");
-          }}
-        >
-          Click me to test
-        </button>
+            ))
+          ) : (
+            <div>No messages</div>
+          )}
+          <div ref={messageEndRef}></div>
+        </div>
+
+        <div className="modal-footer flex w-full items-stretch gap-1">
+          <input
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                const msg = sendMsg.trim();
+                if (!msg) return;
+                sendMessage?.(msg);
+                setSendMsg("");
+              }
+            }}
+            onChange={(e) => setSendMsg(e.target.value)}
+            value={sendMsg}
+            className="input h-12 grow"
+            placeholder="Type your message here..."
+          ></input>
+          <button
+            disabled={sendMsg.trim().length === 0}
+            type="button"
+            className="btn btn-primary btn-square h-12"
+            onClick={() => {
+              sendMessage?.(sendMsg);
+              setSendMsg("");
+            }}
+          >
+            <SendIcon />
+          </button>
+        </div>
       </div>
       <form method="dialog" className="modal-backdrop">
         <button>close</button>
