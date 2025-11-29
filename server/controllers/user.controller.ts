@@ -3,7 +3,6 @@ import Post from '../models/post.model.js'
 import extend from 'lodash/extend.js'
 import type { Request as JWTRequest } from "express-jwt"
 import type { NextFunction, Response } from 'express'
-import mongoose from 'mongoose'
 
 type UserRequest = JWTRequest & {
   profile?: any
@@ -50,7 +49,10 @@ const create = async (req: JWTRequest, res: Response) => {
   }
 }
 const list = async (req: JWTRequest, res: Response) => {
+  let currentUserId = req.auth?.sub; 
+
   try {
+    // get users whose tag starts with the search query, excluding _deleted and the current user
     let filter = {
       $and: [
         {
@@ -62,6 +64,9 @@ const list = async (req: JWTRequest, res: Response) => {
           "tag": {
             $ne: "_deleted",
           }
+        },
+        {
+          _id: { $ne: currentUserId }
         }
       ]
     }
