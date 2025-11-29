@@ -1,5 +1,5 @@
-import type { Channel } from "../types/channel.types.ts";
-import type { Message } from "../types/message.types.ts";
+import type { IChannel } from "../types/channel.types.ts";
+import type { IMessage } from "../types/message.types.ts";
 import Channel from "./Channel/Channel.tsx";
 import ChannelCreateModal from "./Channel/ChannelCreateModal.tsx";
 import ChatModal from "./Channel/ChatModal.tsx";
@@ -13,11 +13,15 @@ import { useToast } from "./Toast";
 export default function ChatDrawer(htmlFor: string) {
   const auth = useAuth();
   const toast = useToast();
-  const [channels, setChannels] = useState<Channel[]>([]);
+  const [channels, setChannels] = useState<IChannel[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [activeChat, setActiveChat] = useState<Channel | null>(null);
+  const [activeChat, setActiveChat] = useState<IChannel | null>(null);
   const socketRef = useRef<Socket | null>(null);
-  const [messagesByChannel, setMessagesByChannel] = useState<Map<Channel._id, Message[]>>(new Map());
+  const [messagesByChannel, setMessagesByChannel] = useState<
+    Record<string, IMessage[]>
+  >({});
+  const chatModal = document.getElementById("chat-modal") as HTMLDialogElement | null;
+
 
   const getChannels = async () => {
     try {
@@ -34,7 +38,6 @@ export default function ChatDrawer(htmlFor: string) {
     if (socketRef.current) return;
 
     const socket = io("http://localhost:3000", {
-      auth: { token: auth.me._id },
       transports: ["websocket"],
     });
 
@@ -42,12 +45,40 @@ export default function ChatDrawer(htmlFor: string) {
 
     socket.on("connect", () => console.info("socket connected", socket.id));
 
-    socket.on("message", (msg: any) => {
-      console.log("The returned message", msg)
+    socket.on("message", (message: IMessage) => {
+      console.log("Message back to client! ", message);
+      const { channelId } = message;
+      setMessagesByChannel((prev) => ({
+        ...prev,
+        [channelId]: [
+          ...(prev[channelId] || []),
+          message,
+        ],
+      }));
     });
 
     socket.on("connect_error", (err) =>
-      console.warn("socket connect_error", err)
+      toast.error("socket connect_error: " + err)
+    );
+
+    socket.on("history", (history: { channelId: string; messages: IMessage[] }) => {
+      console.log("Socket history:", history);
+      setMessagesByChannel((prev) => {
+        const currentMessages = prev[history.channelId] || [];
+        const mergedMessages = [...currentMessages, ...history.messages];
+        // Remove duplicates based on message _id
+        const uniqueMessages = mergedMessages.filter((msg, index, self) =>
+          index === self.findIndex((m) => m._id === msg._id)
+        );
+        return {
+          ...prev,
+          [history.channelId]: uniqueMessages,
+        };
+      });
+    });
+
+    socket.on("error", (err) =>
+      toast.error("socket error: " + err)
     );
 
     return () => {
@@ -60,11 +91,11 @@ export default function ChatDrawer(htmlFor: string) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
-    const type = formData.get("type") as string;
+    const type = formData.get("type") as "dm" | "channel";
     const searchUser = formData.get("searchUser") as string;
 
     console.log("Create channel");
-    const channel: Channel = {
+    const channel: IChannel = {
       name: type === "dm" ? searchUser : name,
       type: type,
       members: [searchUser],
@@ -81,13 +112,14 @@ export default function ChatDrawer(htmlFor: string) {
     await getChannels();
   };
 
-  const onOpenChannel = (channel: Channel) => {
-    document.getElementById("chat-modal").showModal();
+  const onOpenChannel = (channel: IChannel) => {
+    chatModal?.showModal();
     setActiveChat(channel);
 
     const socket = socketRef.current;
     if (socket && socket.connected) {
       socket.emit("join", channel._id);
+      socket.emit("getHistory", { channelId: channel._id });
     }
   };
 
@@ -97,6 +129,7 @@ export default function ChatDrawer(htmlFor: string) {
     const socket = socketRef.current;
     const payload = {
       channelId: activeChat._id,
+      author: auth.me._id,
       msg: msg,
     };
 
@@ -106,13 +139,21 @@ export default function ChatDrawer(htmlFor: string) {
     }
   };
 
+  const currentMessages = activeChat && activeChat._id
+    ? messagesByChannel[activeChat._id] || []
+    : [];
   return (
     <div className="drawer">
       <ChannelCreateModal
         modalID="channel-create-modal"
         onCreate={createChannel}
       />
-      <ChatModal modalID="chat-modal" sendMessage={sendMessage} />
+      <ChatModal
+        userId={auth.me._id}
+        modalID="chat-modal"
+        sendMessage={sendMessage}
+        messages={currentMessages}
+      />
       <input
         id={htmlFor}
         onChange={() => setDrawerOpen(!drawerOpen)}
@@ -137,12 +178,12 @@ export default function ChatDrawer(htmlFor: string) {
         <ul className="menu bg-base-200 text-lg min-h-full w-80 p-4">
           <div className="flex flex-row justify-between items-center w-full">
             <h3 className="text-2xl font-bold">Messages</h3>
-
             <button
               className="btn btn-primary btn-circle w-8 h-8"
-              onClick={() =>
-                document.getElementById("channel-create-modal").showModal()
-              }
+              onClick={() => {
+                const createDialog = document.getElementById("channel-create-modal") as HTMLDialogElement | null;
+                createDialog?.showModal();
+              }}
             >
               <PlusIcon />
             </button>
@@ -152,9 +193,8 @@ export default function ChatDrawer(htmlFor: string) {
             <li key={channel._id}>
               <Channel
                 channel={channel}
-                isUserOwner={channel.owner === auth.me._id}
+                isUserOwner={channel.owner?._id === auth.me._id}
                 onOpenChannel={() => onOpenChannel(channel)}
-                messagesByChannel={messagesByChannel.get(channel._id) || []}
               />
             </li>
           ))}
