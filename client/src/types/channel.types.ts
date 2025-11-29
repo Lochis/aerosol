@@ -1,7 +1,7 @@
-import { User } from "./user.types";
+import type { User } from "./user.types";
 
-export interface Channel {
-  _id: string;
+export interface IChannel {
+  _id?: string;
   name: string;
   type: "channel" | "dm";
   members: User["_id"][]; // only user IDs
