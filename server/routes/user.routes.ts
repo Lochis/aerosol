@@ -12,7 +12,7 @@ router.route('/api/users/:userId').put(userCtrl.update)
 router.route('/api/users/:userId').delete(userCtrl.remove)*/
 
 router.route('/users/:tag').get(userCtrl.read);
-router.route('/users').get(userCtrl.list);
+router.route('/users').get(requireSignin, userCtrl.list);
 
 router.param('tag', userCtrl.userByTag);
 
