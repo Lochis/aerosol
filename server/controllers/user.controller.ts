@@ -71,7 +71,7 @@ const list = async (req: JWTRequest, res: Response) => {
       ]
     }
     let users = await User.find(filter).select('_id name tag')
-    console.log(users);
+    console.log(users.length, "users found for search:", req.query.search);
     res.json(users)
   } catch (err) {
     return res.status(400).json({
@@ -88,7 +88,7 @@ const userByTag = async (req: UserRequest, res: Response, next: NextFunction, ta
         error: "User not found"
       })
     req.profile = user
-    console.log("Request profile set to:", req.profile);
+    console.log("Request profile set to:", req.profile.tag);
     next()
   } catch (err) {
     return res.status(400).json({
@@ -97,7 +97,7 @@ const userByTag = async (req: UserRequest, res: Response, next: NextFunction, ta
   }
 }
 const read = (req: UserRequest, res: Response) => {
-  console.log("Read request for user:", req.profile);
+  console.log("Read request for user:", req.profile.tag);
   req.profile.passwordHash = undefined
   req.profile.email = undefined
   //console.log("Read user:", req.profile);

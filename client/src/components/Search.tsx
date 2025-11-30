@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState } from "react";
 import { useAuth } from "../lib/auth.ts";
 import Avatar from "boring-avatars";
 import { useNavigate } from "react-router";
@@ -17,7 +17,7 @@ export default function Search({
   const auth = useAuth();
   const [searchUsers, setSearchUsers] = useState<ReducedUsers[]>([]);
   const [search, setSearch] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string>("");
   const navigate = useNavigate();
 
   const handleChange = (e: any) => {
@@ -37,7 +37,7 @@ export default function Search({
       );
 
       setSearchUsers(response.data);
-      console.log(response.data);
+      console.log("Search users retrieved, number:", response.data.length);
     } catch (error) {
       console.error("Error fetching searchable users", error);
     }

@@ -68,8 +68,8 @@ export default function Profile() {
             name: formData.get("name"),
         };
         try {
-            const response = await auth.api.put("/me", data);
-            console.log("Profile update successful:", response.data);
+            await auth.api.put("/me", data);
+            toast.success("Profile update successful");
         } catch (error) {
             toast.error(error);
         }
@@ -77,8 +77,8 @@ export default function Profile() {
 
     async function deleteUserAccount() {
         try {
-            const response = await auth.api.delete("/me");
-            console.log("Account deletion successful:", response.data);
+            await auth.api.delete("/me");
+            toast.success("Account deletion successful");
             navigate("/auth");
             auth.clearAuth();
         } catch (error) {
