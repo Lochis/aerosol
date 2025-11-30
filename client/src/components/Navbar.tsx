@@ -23,7 +23,7 @@ export default function NavBar() {
           </Link>
         </div>
 
-        <Search auth={auth} />
+        <Search onSelect={(user) => navigate(`/profile/${user.tag}`)} />
 
         <div className="dropdown dropdown-bottom dropdown-end relative">
           <div

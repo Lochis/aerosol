@@ -9,8 +9,9 @@ import { io, Socket } from "socket.io-client";
 import { useAuth } from "../lib/auth.ts";
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "./Toast";
+import type { ReducedUsers } from "../types/user.types.ts";
 
-export default function ChatDrawer(htmlFor: string) {
+export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
   const auth = useAuth();
   const toast = useToast();
   const [channels, setChannels] = useState<IChannel[]>([]);
@@ -20,6 +21,10 @@ export default function ChatDrawer(htmlFor: string) {
   const [messagesByChannel, setMessagesByChannel] = useState<
     Record<string, IMessage[]>
   >({});
+
+  // for use in ChannelCreateModal
+  const [members, setMembers] = useState<ReducedUsers[]>([]);
+
   const chatModal = document.getElementById("chat-modal") as HTMLDialogElement | null;
 
 
@@ -90,6 +95,7 @@ export default function ChatDrawer(htmlFor: string) {
 
   const createChannel = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
     const type = formData.get("type") as "dm" | "channel";
@@ -99,7 +105,7 @@ export default function ChatDrawer(htmlFor: string) {
     const channel: IChannel = {
       name: type === "dm" ? searchUser : name,
       type: type,
-      members: [searchUser],
+      members: members.map((user) => user._id),
     };
 
     try {
@@ -111,6 +117,7 @@ export default function ChatDrawer(htmlFor: string) {
       toast.error(error);
     }
     await getChannels();
+    document.getElementById("channel-create-modal-close")?.click();
   };
 
   const onOpenChannel = (channel: IChannel) => {
@@ -148,8 +155,11 @@ export default function ChatDrawer(htmlFor: string) {
       <ChannelCreateModal
         modalID="channel-create-modal"
         onCreate={createChannel}
+        members={members}
+        setMembers={setMembers}
       />
       <ChatModal
+        activeChat={activeChat}
         userId={auth.me._id}
         modalID="chat-modal"
         sendMessage={sendMessage}
@@ -190,6 +200,7 @@ export default function ChatDrawer(htmlFor: string) {
             </button>
           </div>
           <div className="divider"></div>
+          <div className="flex flex-col gap-2">
           {channels.map((channel) => (
             <li key={channel._id}>
               <Channel
@@ -199,6 +210,7 @@ export default function ChatDrawer(htmlFor: string) {
               />
             </li>
           ))}
+          </div>
         </ul>
       </div>
     </div>
