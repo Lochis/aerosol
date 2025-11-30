@@ -43,11 +43,19 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
 
     if (socketRef.current) return;
 
-    const socket = io("http://localhost:3000", {
-      transports: ["websocket"],
-    });
+    console.log("client api base:", process.env.CLIENT_API_BASE);
+    if (!process.env.CLIENT_API_BASE) {
+      toast.error("CLIENT_API_BASE not set");
+      return;
+    }
 
-    socketRef.current = socket;
+    const socket = io(
+      process.env.CLIENT_API_BASE.replace(/\/api\/?$/, "") ||
+        "http://localhost:3000",
+      {
+        transports: ["websocket"],
+      }
+    );
 
     socket.on("connect", () => console.info("socket connected", socket.id));
 
