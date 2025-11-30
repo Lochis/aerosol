@@ -38,7 +38,7 @@ export default function ChatModal({
 
   return (
     <dialog id={modalID} className="modal">
-      <div className="modal-box max-w-4xl lg:max-h-170">
+      <div className="modal-box max-w-4xl overflow-hidden">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
