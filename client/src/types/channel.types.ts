@@ -1,4 +1,6 @@
-import type { User } from "./user.types";
+import type { ReducedUsers, User } from "./user.types";
+
+export type ChannelMember = User | ReducedUsers | User["_id"];
 
 export interface IChannel {
   _id?: string;
@@ -9,5 +11,5 @@ export interface IChannel {
     name: User["name"];
   };
   type: "channel" | "dm";
-  members: User["_id"][]; // only user IDs
+  members: ChannelMember[]; // only user IDs
 }
