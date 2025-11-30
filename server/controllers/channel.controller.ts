@@ -1,6 +1,7 @@
 import type { Response } from "express"
 import type { Request as JWTRequest } from "express-jwt"
 import Channel from "../models/channel.model.js"
+import Message from "../models/message.model.js"
 
 export async function createChannel(req: JWTRequest, res: Response) {
     if (!req.auth?.sub) return res.status(401).json({ error: "Not authenticated" })
@@ -34,4 +35,18 @@ export async function getChannels(req: JWTRequest, res: Response){
     .populate('owner', 'tag name _id avatar_url')
 
     res.status(200).json(channels)
+}
+
+export async function deleteChannel(req: JWTRequest, res: Response){
+    if (!req.auth?.sub) return res.status(401).json({ error: "Not authenticated" })
+    const channelId = req.params.id
+    const channel = await Channel.findById(channelId)
+    if (!channel) return res.status(404).json({ error: "Channel not found" })
+    if (channel.owner.toString() !== req.auth.sub) return res.status(403).json({ error: "Not authorized to delete this channel" })
+
+    // delete messages and then channel
+    await Message.deleteMany({ channel: channelId })
+    await channel.deleteOne()
+    
+    res.status(204).send()
 }

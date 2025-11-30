@@ -133,8 +133,10 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
   const deleteChannel = async (channelId: IChannel["_id"]) => {
     try {
       await auth.client.delete(`/channel/${channelId}`);
+      document.getElementById("chat-modal-close")?.click();
       setActiveChat(null);
       await getChannels();
+      
     } catch (error) {
       toast.error(error);
     }

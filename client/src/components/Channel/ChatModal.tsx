@@ -46,25 +46,38 @@ export default function ChatModal({
         </form>
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl font-bold">{channelName}</div>
-          <button
-            className="btn btn-primary mr-5"
-            hidden={activeChat?.type === "dm"}
-            onClick={() => setShowMembers(!showMembers)}
-          >
-            {showMembers ? "Hide Members" : "Show Members"}
-          </button>
-          {isUserOwner && (
-            <button
-              className="btn btn-error mr-2"
-              onClick={() => {
-                if (activeChat) {
-                  deleteChannel?.(activeChat._id);
-                }
-              }}
+
+          <div className="dropdown dropdown-end mr-5">
+            <div tabIndex={0} role="button" className="btn m-1">
+              Options
+            </div>
+            <ul
+              tabIndex={-1}
+              className="dropdown-content menu p-2 gap-2 shadow bg-base-100 rounded-box w-32"
             >
-              Delete Channel
-            </button>
-          )}
+              <li
+                role="button"
+                className="btn btn-sm"
+                hidden={activeChat?.type === "dm"}
+                onClick={() => setShowMembers(!showMembers)}
+              >
+                {showMembers ? "Hide Members" : "Show Members"}
+              </li>
+              {isUserOwner && (
+                <li
+                  role="button"
+                  className="btn btn-sm btn-error"
+                  onClick={() => {
+                    if (activeChat) {
+                      deleteChannel?.(activeChat._id);
+                    }
+                  }}
+                >
+                  Delete Channel
+                </li>
+              )}
+            </ul>
+          </div>
         </div>
         <div className="divider mt-0 mb-2"></div>
 
@@ -145,7 +158,7 @@ export default function ChatModal({
         </div>
       </div>
       <form method="dialog" className="modal-backdrop">
-        <button>close</button>
+        <button id="chat-modal-close">close</button>
       </form>
     </dialog>
   );
