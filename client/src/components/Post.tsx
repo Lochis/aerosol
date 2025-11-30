@@ -51,7 +51,10 @@ export default function Post({
               </p>
             </div>
             {canEdit && (
-              <button className="btn btn-ghost btn-sm btn-outline" onClick={() => setEditing(true)}>
+              <button
+                className="btn btn-ghost btn-sm btn-outline"
+                onClick={() => setEditing(true)}
+              >
                 Edit
               </button>
             )}
@@ -69,21 +72,37 @@ export default function Post({
 
               const fullHTML = DOMPurify.sanitize(md.render(raw));
 
-              const truncatedHTML = DOMPurify.sanitize(md.render(raw.slice(0, LONG_THRESHOLD) + "..."));
+              const truncatedHTML = DOMPurify.sanitize(
+                md.render(raw.slice(0, LONG_THRESHOLD) + "...")
+              );
 
               if (raw.length <= LONG_THRESHOLD) {
-                return <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: fullHTML }} />;
+                return (
+                  <div
+                    className="prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: fullHTML }}
+                  />
+                );
               }
 
               return (
                 <>
                   {!expanded ? (
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: truncatedHTML }} />
+                    <div
+                      className="prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: truncatedHTML }}
+                    />
                   ) : (
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: fullHTML }} />
+                    <div
+                      className="prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: fullHTML }}
+                    />
                   )}
 
-                  <button className="btn btn-link btn-xs mt-1" onClick={() => setExpanded(!expanded)}>
+                  <button
+                    className="btn btn-link btn-xs mt-1"
+                    onClick={() => setExpanded(!expanded)}
+                  >
                     {expanded ? "Show less" : "Show more"}
                   </button>
                 </>
@@ -91,7 +110,12 @@ export default function Post({
             })()}
           </div>
         ) : (
-          <EditContent post={post} onDelete={onDelete} onEdit={onEdit} onExit={() => setEditing(false)} />
+          <EditContent
+            post={post}
+            onDelete={onDelete}
+            onEdit={onEdit}
+            onExit={() => setEditing(false)}
+          />
         )}
 
         {/* Interaction buttons */}
@@ -164,13 +188,25 @@ function EditContent({
         disabled={pending}
       />
       <div className="flex gap-2 mt-2 justify-end">
-        <button className="btn btn-circle btn-ghost btn-sm opacity-70" onClick={handleDelete} disabled={pending}>
+        <button
+          className="btn btn-circle btn-ghost btn-sm opacity-70"
+          onClick={handleDelete}
+          disabled={pending}
+        >
           <TrashIcon />
         </button>
-        <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={!canSave}>
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={handleSave}
+          disabled={!canSave}
+        >
           Save
         </button>
-        <button className="btn btn-outline btn-sm" onClick={onExit} disabled={pending}>
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={onExit}
+          disabled={pending}
+        >
           Cancel
         </button>
       </div>
@@ -182,7 +218,9 @@ function LikePost({ post }: { post: PostType }) {
   const toast = useToast();
   const auth = useAuth();
   const [likes, setLikes] = useState(post.likes ?? 0);
-  const [liked, setLiked] = useState(post.likedBy?.includes(auth.me._id) ?? false);
+  const [liked, setLiked] = useState(
+    post.likedBy?.includes(auth.me._id) ?? false
+  );
   const [pending, setPending] = useState(false);
 
   async function handleLike() {
@@ -206,7 +244,8 @@ function LikePost({ post }: { post: PostType }) {
       }`}
       onClick={handleLike}
       disabled={pending}
-      title={liked ? "Unlike" : "Like"}>
+      title={liked ? "Unlike" : "Like"}
+    >
       <HeartIcon />
       <span className="text-xs">{likes}</span>
     </button>
