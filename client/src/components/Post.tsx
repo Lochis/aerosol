@@ -95,16 +95,17 @@ function Content({ post }: { post: PostType }) {
 
   const canExpand = raw.length > LONG_THRESHOLD;
   const fullHTML = DOMPurify.sanitize(md.render(raw));
-  const truncatedHTML = DOMPurify.sanitize(
-    md.render(raw.slice(0, LONG_THRESHOLD) + "...")
-  );
 
   return (
     <div className="mt-2">
       {canExpand && !expanded ? (
         <div
           className="prose prose-sm max-w-none"
-          dangerouslySetInnerHTML={{ __html: truncatedHTML }}
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(
+              md.render(raw.slice(0, LONG_THRESHOLD) + "...")
+            ),
+          }}
         />
       ) : (
         <div
