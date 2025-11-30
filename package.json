@@ -13,8 +13,5 @@
   "workspaces": [
     "client",
     "server"
-  ],
-  "dependencies": {
-    "dompurify": "^3.3.0"
-  }
+  ]
 }

@@ -4,9 +4,6 @@
   "workspaces": {
     "": {
       "name": "aerosol",
-      "dependencies": {
-        "dompurify": "^3.3.0",
-      },
       "devDependencies": {
         "concurrently": "^9.2.1",
       },
@@ -20,6 +17,7 @@
         "boring-avatars": "^2.0.4",
         "bun-plugin-tailwind": "^0.1.2",
         "daisyui": "^5.5.5",
+        "dompurify": "^3.3.0",
         "eslint": "^9.39.1",
         "eslint-plugin-react-hooks": "^7.0.1",
         "eslint-plugin-react-refresh": "^0.4.24",
