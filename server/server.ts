@@ -1,6 +1,8 @@
 import config from "./config/config.ts";
+import http from "http";
 import app from "./express.ts";
 import mongoose from "mongoose";
+import { initSocket } from "./socket.ts";
 
 mongoose.Promise = global.Promise;
 mongoose
@@ -18,7 +20,11 @@ mongoose.connection.on("error", () => {
   throw new Error(`unable to connect to database: ${config.mongoUri}`);
 });
 
-app.listen(config.port, (err: any) => {
+const server = http.createServer(app);
+
+export const io = initSocket(server);
+
+server.listen(config.port, (err: any) => {
   if (err) {
     console.log(err);
   }

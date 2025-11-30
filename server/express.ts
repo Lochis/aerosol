@@ -10,6 +10,7 @@ import { globalBurstLimit, globalRateLimit } from './ratelimits.ts'
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.ts'
 import postRoutes from './routes/post.routes.ts'
+import channelRoutes from './routes/channel.routes.js'
 
 const app = express()
 
@@ -48,6 +49,7 @@ app.use(globalRateLimit)
 app.use('/api', userRoutes)
 app.use('/api', authRoutes)
 app.use('/api', postRoutes)
+app.use('/api', channelRoutes)
 app.get('/api', (_req: Request, res: Response) => {
   res.json({ message: "Aerosol API v2" })
 })

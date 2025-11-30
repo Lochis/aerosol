@@ -6,3 +6,9 @@ export interface User {
     avatar_url?: string;
     createdAt?: string;
 }
+
+export type ReducedUsers = {
+    _id: string;
+    tag: string;
+    name: string;
+  };
