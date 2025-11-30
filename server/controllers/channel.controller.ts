@@ -1,7 +1,6 @@
 import type { Response } from "express"
 import type { Request as JWTRequest } from "express-jwt"
 import Channel from "../models/channel.model.js"
-import User from "../models/user.model.js"
 
 export async function createChannel(req: JWTRequest, res: Response) {
     if (!req.auth?.sub) return res.status(401).json({ error: "Not authenticated" })
