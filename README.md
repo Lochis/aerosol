@@ -1,6 +1,5 @@
 # Aerosol
 
-> Temp for vercel to take commit
 
 ## Usage
 
