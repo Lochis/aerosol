@@ -1,26 +1,45 @@
 import Avatar from "boring-avatars";
-import type { Channel } from "./types/channel.types";
+import type { IChannel } from "../../types/channel.types.ts";
 export default function Channel({
   channel,
   isUserOwner,
   onOpenChannel,
 }: {
-  channel: Channel;
+  channel: IChannel;
   isUserOwner: boolean;
-  onOpenChannel: (channel: Channel) => void;
+  onOpenChannel: (channel: IChannel) => void;
 }) {
   const isDM = channel.type === "dm";
+
+   const firstMember = channel.members[0];
+   
+  const isMemberObject = typeof firstMember === "object" && firstMember !== null && "name" in firstMember && "tag" in firstMember;
+  const avatarName = isUserOwner
+    ? isMemberObject
+      ? (firstMember as { name?: string }).name ?? channel.owner?.tag
+      : channel.owner?.tag
+    : "";
+
+
+    const dmName = isMemberObject
+    ? (firstMember as { tag: string }).tag
+    : isUserOwner
+    ? channel.owner?.tag
+    : (firstMember as string);
+
+  const channelName = isDM ? dmName : channel.name;
+
   return (
     <button className="btn btn-outline rounded-xl" onClick={() => onOpenChannel(channel)}>
-      <Avatar
+      {isDM && <Avatar
         size={32}
-        name={isUserOwner ? channel.members[0].name : channel.owner.tag}
+        name={avatarName}
         variant="beam"
         colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
-      />
+      />}
       <span className="text-base font-semibold">
         {isDM ? "@" : "#"}
-        {isDM ? (isUserOwner ? channel.members[0].tag : channel.owner.tag) : channel.name}
+        {channelName}
       </span>
     </button>
   );
