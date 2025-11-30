@@ -27,7 +27,6 @@ export default function Post({
   const auth = useAuth();
   const [editing, setEditing] = useState(false);
   const canEdit = post.author._id === auth.me._id && !editing;
-  const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="card bg-base-100 shadow-md border border-base-350 max-w-xl mx-auto mb-4">
@@ -64,50 +63,7 @@ export default function Post({
 
         {/* Post content */}
         {!editing ? (
-          <div className="mt-2">
-            {(() => {
-              const raw = post.content;
-              const LONG_THRESHOLD = 300;
-
-              const fullHTML = DOMPurify.sanitize(md.render(raw));
-
-              const truncatedHTML = DOMPurify.sanitize(
-                md.render(raw.slice(0, LONG_THRESHOLD) + "...")
-              );
-
-              if (raw.length <= LONG_THRESHOLD) {
-                return (
-                  <div
-                    className="prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: fullHTML }}
-                  />
-                );
-              }
-
-              return (
-                <>
-                  {!expanded ? (
-                    <div
-                      className="prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: truncatedHTML }}
-                    />
-                  ) : (
-                    <div
-                      className="prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: fullHTML }}
-                    />
-                  )}
-
-                  <button
-                    className="btn btn-link btn-xs mt-1"
-                    onClick={() => setExpanded(!expanded)}
-                  >
-                    {expanded ? "Show less" : "Show more"}
-                  </button>
-                </>
-              );
-            })()}
-          </div>
+          <Content post={post} />
         ) : (
           <EditContent
             post={post}
@@ -128,6 +84,45 @@ export default function Post({
           <LikePost post={post} />
         </div>
       </div>
+    </div>
+  );
+}
+
+function Content({ post }: { post: PostType }) {
+  const raw = post.content;
+  const LONG_THRESHOLD = 300;
+  const [expanded, setExpanded] = useState(false);
+
+  const canExpand = raw.length > LONG_THRESHOLD;
+  const fullHTML = DOMPurify.sanitize(md.render(raw));
+  const truncatedHTML = DOMPurify.sanitize(
+    md.render(raw.slice(0, LONG_THRESHOLD) + "...")
+  );
+
+  return (
+    <div className="mt-2">
+      {canExpand && !expanded ? (
+        <div
+          className="prose prose-sm max-w-none"
+          dangerouslySetInnerHTML={{ __html: truncatedHTML }}
+        />
+      ) : (
+        <div
+          className="prose prose-sm max-w-none"
+          dangerouslySetInnerHTML={{ __html: fullHTML }}
+        />
+      )}
+
+      {canExpand ? (
+        <button
+          className="btn btn-link btn-xs mt-1"
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
