@@ -18,7 +18,6 @@ export function initSocket(server: http.Server) {
 
     socket.on("message", async (data: any) => {
       try {
-        console.log(data);
         const {channelId, author, msg} = data;
 
         if (!channelId || !msg) {
@@ -62,7 +61,7 @@ export function initSocket(server: http.Server) {
           .sort({ createdAt: 1 })
           .populate("author", "_id tag name avatar_url");
 
-        console.log(messages);
+        console.log("Fetched history for channel:", channelId, messages.length, "messages");
         socket.emit("history", { channelId: channelId, messages: messages });
       } catch (err) {
         console.error("socket getHistory handler error:", err);

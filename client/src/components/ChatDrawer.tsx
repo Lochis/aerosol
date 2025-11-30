@@ -62,7 +62,7 @@ export default function ChatDrawer(htmlFor: string) {
     );
 
     socket.on("history", (history: { channelId: string; messages: IMessage[] }) => {
-      console.log("Socket history:", history);
+      
       setMessagesByChannel((prev) => {
         const currentMessages = prev[history.channelId] || [];
         const mergedMessages = [...currentMessages, ...history.messages];
@@ -75,6 +75,7 @@ export default function ChatDrawer(htmlFor: string) {
           [history.channelId]: uniqueMessages,
         };
       });
+      console.log("Socket history retrieved for channel:", history.channelId);
     });
 
     socket.on("error", (err) =>
