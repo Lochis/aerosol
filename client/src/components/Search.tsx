@@ -1,24 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "../lib/auth.ts";
 import Avatar from "boring-avatars";
-import { useNavigate } from "react-router";
+import type { ReducedUsers } from "../types/user.types.ts";
 
 export default function Search({
-  navigateOnSelect = true,
+  onSelect,
 }: {
-  navigateOnSelect?: boolean;
+  onSelect?: (user: ReducedUsers) => void;
 }) {
-  type ReducedUsers = {
-    _id: string;
-    tag: string;
-    name: string;
-  };
 
   const auth = useAuth();
   const [searchUsers, setSearchUsers] = useState<ReducedUsers[]>([]);
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string>("");
-  const navigate = useNavigate();
 
   const handleChange = (e: any) => {
     const userTag = e.target.value;
@@ -49,20 +43,12 @@ export default function Search({
     setSelectedId(user._id);
     setSearchUsers([]);
 
-    // if consumer wants navigation (default), navigate to profile
-    if (navigateOnSelect) {
-      navigate(`/profile/${user.tag}`);
-    }
-
-    setSearch(user.tag);
+    onSelect?.(user);
+    setSearch("");
   };
 
   return (
-    <div
-      className={`dropdown ${
-        searchUsers.length > 0 ? "dropdown-open" : "dropdown-close"
-      }`}
-    >
+    <div className={`dropdown ${searchUsers.length > 0 ? "focus-within:dropdown-open" : "dropdown-close"}`}>
       <label className="input input-secondary w-full">
         <svg
           className="h-[1em] opacity-50"
