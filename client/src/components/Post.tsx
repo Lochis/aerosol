@@ -3,10 +3,17 @@ import CommentIcon from "./icons/CommentIcon";
 import RepostIcon from "./icons/RepostIcon";
 import HeartIcon from "./icons/HeartIcon";
 import TrashIcon from "./icons/TrashIcon";
+import DOMPurify from "dompurify";
+import MarkdownIt from "markdown-it";
 import type { Post as PostType } from "../types/post.types";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";
 import { useToast } from "./Toast";
+
+const md = new MarkdownIt({
+  breaks: true,
+  linkify: true,
+});
 
 export default function Post({
   post,
@@ -56,7 +63,7 @@ export default function Post({
 
         {/* Post content */}
         {!editing ? (
-          <p className="mt-2">{post.content}</p>
+          <Content post={post} />
         ) : (
           <EditContent
             post={post}
@@ -77,6 +84,46 @@ export default function Post({
           <LikePost post={post} />
         </div>
       </div>
+    </div>
+  );
+}
+
+function Content({ post }: { post: PostType }) {
+  const raw = post.content;
+  const LONG_THRESHOLD = 300;
+  const [expanded, setExpanded] = useState(false);
+
+  const canExpand = raw.length > LONG_THRESHOLD;
+  const fullHTML = DOMPurify.sanitize(md.render(raw));
+
+  return (
+    <div className="mt-2">
+      {canExpand && !expanded ? (
+        <div
+          className="prose prose-sm max-w-none"
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(
+              md.render(raw.slice(0, LONG_THRESHOLD) + "...")
+            ),
+          }}
+        />
+      ) : (
+        <div
+          className="prose prose-sm max-w-none"
+          dangerouslySetInnerHTML={{ __html: fullHTML }}
+        />
+      )}
+
+      {canExpand ? (
+        <button
+          className="btn btn-link btn-xs mt-1"
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
