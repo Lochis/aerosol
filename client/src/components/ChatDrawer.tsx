@@ -25,8 +25,9 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
   // for use in ChannelCreateModal
   const [members, setMembers] = useState<ReducedUsers[]>([]);
 
-  const chatModal = document.getElementById("chat-modal") as HTMLDialogElement | null;
-
+  const chatModal = document.getElementById(
+    "chat-modal"
+  ) as HTMLDialogElement | null;
 
   const getChannels = async () => {
     try {
@@ -55,10 +56,7 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
       const { channelId } = message;
       setMessagesByChannel((prev) => ({
         ...prev,
-        [channelId]: [
-          ...(prev[channelId] || []),
-          message,
-        ],
+        [channelId]: [...(prev[channelId] || []), message],
       }));
     });
 
@@ -66,26 +64,27 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
       toast.error("socket connect_error: " + err)
     );
 
-    socket.on("history", (history: { channelId: string; messages: IMessage[] }) => {
-      
-      setMessagesByChannel((prev) => {
-        const currentMessages = prev[history.channelId] || [];
-        const mergedMessages = [...currentMessages, ...history.messages];
-        // Remove duplicates based on message _id
-        const uniqueMessages = mergedMessages.filter((msg, index, self) =>
-          index === self.findIndex((m) => m._id === msg._id)
-        );
-        return {
-          ...prev,
-          [history.channelId]: uniqueMessages,
-        };
-      });
-      console.log("Socket history retrieved for channel:", history.channelId);
-    });
-
-    socket.on("error", (err) =>
-      toast.error("socket error: " + err)
+    socket.on(
+      "history",
+      (history: { channelId: string; messages: IMessage[] }) => {
+        setMessagesByChannel((prev) => {
+          const currentMessages = prev[history.channelId] || [];
+          const mergedMessages = [...currentMessages, ...history.messages];
+          // Remove duplicates based on message _id
+          const uniqueMessages = mergedMessages.filter(
+            (msg, index, self) =>
+              index === self.findIndex((m) => m._id === msg._id)
+          );
+          return {
+            ...prev,
+            [history.channelId]: uniqueMessages,
+          };
+        });
+        console.log("Socket history retrieved for channel:", history.channelId);
+      }
     );
+
+    socket.on("error", (err) => toast.error("socket error: " + err));
 
     return () => {
       socket.disconnect();
@@ -95,7 +94,7 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
 
   const createChannel = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
     const type = formData.get("type") as "dm" | "channel";
@@ -131,6 +130,16 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
     }
   };
 
+  const deleteChannel = async (channelId: IChannel["_id"]) => {
+    try {
+      await auth.client.delete(`/channel/${channelId}`);
+      setActiveChat(null);
+      await getChannels();
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
   const sendMessage = async (msg: string) => {
     console.log("From sendmessage", activeChat);
     if (!activeChat) return;
@@ -147,9 +156,8 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
     }
   };
 
-  const currentMessages = activeChat && activeChat._id
-    ? messagesByChannel[activeChat._id] || []
-    : [];
+  const currentMessages =
+    activeChat && activeChat._id ? messagesByChannel[activeChat._id] || [] : [];
   return (
     <div className="drawer">
       <ChannelCreateModal
@@ -164,6 +172,7 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
         modalID="chat-modal"
         sendMessage={sendMessage}
         messages={currentMessages}
+        deleteChannel={deleteChannel}
       />
       <input
         id={htmlFor}
@@ -192,7 +201,9 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
             <button
               className="btn btn-primary btn-circle w-8 h-8"
               onClick={() => {
-                const createDialog = document.getElementById("channel-create-modal") as HTMLDialogElement | null;
+                const createDialog = document.getElementById(
+                  "channel-create-modal"
+                ) as HTMLDialogElement | null;
                 createDialog?.showModal();
               }}
             >
@@ -201,15 +212,15 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
           </div>
           <div className="divider"></div>
           <div className="flex flex-col gap-2">
-          {channels.map((channel) => (
-            <li key={channel._id}>
-              <Channel
-                channel={channel}
-                isUserOwner={channel.owner?._id === auth.me._id}
-                onOpenChannel={() => onOpenChannel(channel)}
-              />
-            </li>
-          ))}
+            {channels.map((channel) => (
+              <li key={channel._id}>
+                <Channel
+                  channel={channel}
+                  isUserOwner={channel.owner?._id === auth.me._id}
+                  onOpenChannel={() => onOpenChannel(channel)}
+                />
+              </li>
+            ))}
           </div>
         </ul>
       </div>

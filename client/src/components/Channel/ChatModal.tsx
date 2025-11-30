@@ -11,12 +11,14 @@ export default function ChatModal({
   sendMessage,
   messages,
   userId,
+  deleteChannel,
 }: {
   activeChat: IChannel | null;
   modalID: string;
   sendMessage: (msg: string) => void;
   messages?: IMessage[];
   userId: User["_id"];
+  deleteChannel?: (channelId: IChannel["_id"]) => void;
 }) {
   const [sendMsg, setSendMsg] = useState("");
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -26,7 +28,11 @@ export default function ChatModal({
 
   const [showMembers, setShowMembers] = useState(false);
   const isUserOwner = activeChat?.owner?._id === userId;
-  const channelName = activeChat?.type === "dm" ? "@" + (isUserOwner ? activeChat?.members[0]?.tag : activeChat?.owner?.tag) : "#" + activeChat?.name || "";
+  const channelName =
+    activeChat?.type === "dm"
+      ? "@" +
+        (isUserOwner ? activeChat?.members[0]?.tag : activeChat?.owner?.tag)
+      : "#" + activeChat?.name || "";
 
   // TODO: make types conform
 
@@ -41,22 +47,31 @@ export default function ChatModal({
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl font-bold">{channelName}</div>
           <button
-            className="btn btn-primary mr-5" hidden={activeChat?.type === "dm"}
+            className="btn btn-primary mr-5"
+            hidden={activeChat?.type === "dm"}
             onClick={() => setShowMembers(!showMembers)}
           >
             {showMembers ? "Hide Members" : "Show Members"}
           </button>
+          {isUserOwner && (
+            <button
+              className="btn btn-error mr-2"
+              onClick={() => {
+                if (activeChat) {
+                  deleteChannel?.(activeChat._id);
+                }
+              }}
+            >
+              Delete Channel
+            </button>
+          )}
         </div>
         <div className="divider mt-0 mb-2"></div>
 
         {showMembers &&
           activeChat?.members.map((member) => (
             <div key={member._id} className="badge badge-ghost mr-2">
-              <Avatar
-                size={20}
-                name={member.name}
-                variant="beam"
-              />
+              <Avatar size={20} name={member.name} variant="beam" />
               {member.tag}
             </div>
           ))}
