@@ -27,6 +27,7 @@ export default function Post({
   const auth = useAuth();
   const [editing, setEditing] = useState(false);
   const canEdit = post.author._id === auth.me._id && !editing;
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="card bg-base-100 shadow-md border border-base-350 max-w-xl mx-auto mb-4">
@@ -67,8 +68,6 @@ export default function Post({
             {(() => {
               const raw = post.content;
               const LONG_THRESHOLD = 300;
-
-              const [expanded, setExpanded] = useState(false);
 
               const fullHTML = DOMPurify.sanitize(md.render(raw));
 
