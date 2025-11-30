@@ -57,6 +57,8 @@ export default function ChatDrawer({ htmlFor }: { htmlFor: string }) {
       }
     );
 
+    socketRef.current = socket;
+
     socket.on("connect", () => console.info("socket connected", socket.id));
 
     socket.on("message", (message: IMessage) => {
