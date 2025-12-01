@@ -5,14 +5,29 @@ import HeartIcon from "./icons/HeartIcon";
 import TrashIcon from "./icons/TrashIcon";
 import DOMPurify from "dompurify";
 import MarkdownIt from "markdown-it";
+import hljs from "highlight.js";
 import type { Post as PostType } from "../types/post.types";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";
 import { useToast } from "./Toast";
 
-const md = new MarkdownIt({
+const md = MarkdownIt({
   breaks: true,
   linkify: true,
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(str, { language: lang }).value;
+      } catch (__) {}
+    }
+
+    // auto-detect
+    try {
+      return hljs.highlightAuto(str).value;
+    } catch (_) {}
+
+    return "";
+  },
 });
 
 export default function Post({
