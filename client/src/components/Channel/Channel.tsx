@@ -16,16 +16,15 @@ export default function Channel({
   const isMemberObject = typeof firstMember === "object" && firstMember !== null && "name" in firstMember && "tag" in firstMember;
   const avatarName = isUserOwner
     ? isMemberObject
-      ? (firstMember as { name?: string }).name ?? channel.owner?.tag
+      ? (firstMember as { tag?: string }).tag ?? channel.owner?.tag
       : channel.owner?.tag
     : "";
 
 
-    const dmName = isMemberObject
-    ? (firstMember as { tag: string }).tag
-    : isUserOwner
-    ? channel.owner?.tag
-    : (firstMember as string);
+    const dmName = isUserOwner
+    ? isMemberObject
+    ? firstMember.tag
+    : firstMember?.tag : channel.owner?.tag;
 
   const channelName = isDM ? dmName : channel.name;
 
