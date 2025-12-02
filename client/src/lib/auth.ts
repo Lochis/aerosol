@@ -87,7 +87,9 @@ export class Auth {
   }
 
   clearAuth() {
+    localStorage.removeItem(SUB_KEY);
     localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
     this.setData({ sub: "", accessToken: "", refreshToken: "" });
   }
 
