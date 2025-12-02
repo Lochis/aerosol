@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aerosol-server
+  namespace: aerosol
+  labels:
+    app: aerosol-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aerosol-server
+  template:
+    metadata:
+      labels:
+        app: aerosol-server
+    spec:
+      imagePullSecrets:
+        - name: reg-credentials-ghcr
+      containers:
+        - name: aerosol-server
+          image: ghcr.io/Lochis/aerosol:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: aerosol-env-vars
+
