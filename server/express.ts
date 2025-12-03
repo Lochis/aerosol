@@ -50,6 +50,11 @@ app.use('/api', userRoutes)
 app.use('/api', authRoutes)
 app.use('/api', postRoutes)
 app.use('/api', channelRoutes)
+
+app.get('/', (_req: Request, res: Response) => {
+  res.send('Aerosol API is running')
+})
+
 app.get('/api', (_req: Request, res: Response) => {
   res.json({ message: "Aerosol API v2" })
 })
