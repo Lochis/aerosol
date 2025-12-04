@@ -4,9 +4,17 @@
 }
 
 @utility btn {
-  @apply rounded-none;
+  @apply rounded-lg;
 }
 
 @utility input {
-  @apply rounded-none;
+  @apply rounded-lg;
+}
+
+@utility textarea {
+  @apply rounded-lg;
+}
+
+@utility select {
+  @apply rounded-lg;
 }
