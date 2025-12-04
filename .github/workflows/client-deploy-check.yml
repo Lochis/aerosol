@@ -21,6 +21,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 'notify vercel'
-        uses: vercel/repository-dispatch/actions/status@v1
+        uses: 'vercel/repository-dispatch/actions/status@v1'
         with:
-          name: Vercel - aerosol: client-deploy
+          name: 'Vercel - aerosol: client-deploy'
