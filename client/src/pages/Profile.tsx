@@ -92,11 +92,11 @@ export default function Profile() {
             <form id="profileForm" className="flex flex-col gap-4 w-full max-w-md">
                 <label className="input">
                     <span className="label">@</span>
-                    <input type="text" placeholder="tag" name="tag" value={profile.tag} onChange={handleChange} />
+                    <input type="text" readOnly={!isUserProfile} placeholder="tag" name="tag" value={profile.tag} onChange={handleChange} />
                 </label>
                 <label className="input">
                     <span className="label">Name</span>
-                    <input type="text" placeholder="name" name="name" value={profile.name} onChange={handleChange} />
+                    <input type="text" readOnly={!isUserProfile} placeholder="name" name="name" value={profile.name} onChange={handleChange} />
                 </label>
                 <label className="input" hidden={!isUserProfile}>
                     <span className="label">Email</span>
@@ -109,9 +109,9 @@ export default function Profile() {
             </form>
 
             <div hidden={!isUserProfile} className="flex flex-col md:flex-row md:justify-between mt-12 gap-4">
-                <button className="btn btn-primary w-full lg:max-w-1/6" onClick={updateUserProfile}>Save Changes</button>
+                <button className="btn btn-success w-full lg:max-w-1/6" onClick={updateUserProfile}>Save Changes</button>
                 {/* TODO: add confirmation dialog */}
-                <button className="btn btn-danger w-full lg:max-w-1/6" onClick={deleteUserAccount}>Delete Account</button>
+                <button className="btn btn-warning w-full lg:max-w-1/6" onClick={deleteUserAccount}>Delete Account</button>
             </div>
         </div>
     );
