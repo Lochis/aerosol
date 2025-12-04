@@ -10,6 +10,7 @@ import type { Post as PostType } from "../types/post.types";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";
 import { useToast } from "./Toast";
+import PreviewPostModal from "./PreviewPostModal";
 
 const md = MarkdownIt({
   breaks: true,
@@ -24,10 +25,12 @@ export default function Post({
   post,
   onDelete,
   onEdit,
+  preview = false,
 }: {
   post: PostType;
   onDelete: (post: PostType) => void;
   onEdit: (post: PostType) => void;
+  preview?: boolean;
 }) {
   const auth = useAuth();
   const [editing, setEditing] = useState(false);
@@ -78,15 +81,17 @@ export default function Post({
           />
         )}
 
+        
+
         {/* Interaction buttons */}
         <div className="flex justify-between text-sm opacity-70">
-          <button className="btn btn-circle btn-ghost">
+          <button className="btn btn-circle btn-ghost" disabled={preview}>
             <CommentIcon />
           </button>
-          <button className="btn btn-circle btn-ghost">
+          <button className="btn btn-circle btn-ghost" disabled={preview}>
             <RepostIcon />
           </button>
-          <LikePost post={post} />
+          <LikePost post={post} preview={preview} />
         </div>
       </div>
     </div>
@@ -187,7 +192,21 @@ function EditContent({
         onChange={(e) => setContent(e.target.value)}
         disabled={pending}
       />
-      <div className="flex gap-2 mt-2 justify-end">
+
+      <div className="flex justify-between mt-2">
+        <PreviewPostModal postContent={content} modalID={`edit-preview-post-modal`} />
+        <button
+          className="btn btn-soft btn-sm justify-self-start"
+          onClick={() => {
+            const previewDialog = document.getElementById(`edit-preview-post-modal`) as HTMLDialogElement | null;
+            previewDialog?.showModal();
+          }}
+        >
+          Preview
+        </button>
+      
+      <div className="flex gap-2 justify-end">
+        
         <button
           className="btn btn-circle btn-ghost btn-sm opacity-70"
           onClick={handleDelete}
@@ -210,11 +229,12 @@ function EditContent({
           Cancel
         </button>
       </div>
+      </div>
     </div>
   );
 }
 
-function LikePost({ post }: { post: PostType }) {
+function LikePost({ post , preview = false}: { post: PostType ,preview?: boolean }) {
   const toast = useToast();
   const auth = useAuth();
   const [likes, setLikes] = useState(post.likes ?? 0);
@@ -243,7 +263,7 @@ function LikePost({ post }: { post: PostType }) {
         liked ? "text-red-500 scale-110" : "scale-100"
       }`}
       onClick={handleLike}
-      disabled={pending}
+      disabled={pending || preview}
       title={liked ? "Unlike" : "Like"}
     >
       <HeartIcon />
