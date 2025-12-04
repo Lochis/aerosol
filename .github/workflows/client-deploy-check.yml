@@ -24,3 +24,4 @@ jobs:
         uses: 'vercel/repository-dispatch/actions/status@v1'
         with:
           name: 'Vercel - aerosol: client-deploy'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
