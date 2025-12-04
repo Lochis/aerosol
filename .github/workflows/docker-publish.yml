@@ -101,6 +101,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: fjogeleit/yaml-update-action@main
         with:
+          branch: main
           valueFile: 'manifest.yaml'
           propertyPath: '$.spec.template.spec.containers[0].image'
           value: 'ghcr.io/lochis/aerosol:sha-${{ steps.sha.outputs.sha_short }}'
