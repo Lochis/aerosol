@@ -48,7 +48,7 @@ export default function NavBar() {
               <Link to="/profile">Profile</Link>
             </li>
             <li>
-              <a>Settings</a>
+              <Link to="/settings">Settings</Link>
             </li>
             <li>
               <a onClick={handleLogout}>Logout</a>
