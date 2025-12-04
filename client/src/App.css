@@ -1,4 +1,12 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: nord --default, coffee --prefersdark;
+  themes: all;
+}
+
+@utility btn {
+  @apply rounded-none;
+}
+
+@utility input {
+  @apply rounded-none;
 }
