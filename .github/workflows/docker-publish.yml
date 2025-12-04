@@ -97,3 +97,9 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+
+      - name: Trigger Portainer Aerosol webhook
+        if: github.ref == 'refs/heads/main'
+        run: |
+          SHORT_SHA=${GITHUB_SHA::7}
+          curl -X POST "${{ secrets.PORTAINER_WEBHOOK_URL }}?tag=sha-${SHORT_SHA}"
