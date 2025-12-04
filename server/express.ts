@@ -52,7 +52,7 @@ app.use('/api', postRoutes)
 app.use('/api', channelRoutes)
 
 app.get('/', (_req: Request, res: Response) => {
-  res.send('Aerosol API is running')
+  res.send('Aerosol API is running Testing!')
 })
 
 app.get('/api', (_req: Request, res: Response) => {
