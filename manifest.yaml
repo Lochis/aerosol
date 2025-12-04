@@ -19,11 +19,10 @@ spec:
         - name: reg-credentials-ghcr
       containers:
         - name: aerosol-server
-          image: ghcr.io/lochis/aerosol:latest
+          image: ghcr.io/lochis/aerosol:sha-eaf8055
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
           envFrom:
             - secretRef:
                 name: aerosol-env-vars
-
