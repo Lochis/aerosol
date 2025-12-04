@@ -1,4 +1,20 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: nord --default, coffee --prefersdark;
+  themes: all;
+}
+
+@utility btn {
+  @apply rounded-lg;
+}
+
+@utility input {
+  @apply rounded-lg;
+}
+
+@utility textarea {
+  @apply rounded-lg;
+}
+
+@utility select {
+  @apply rounded-lg;
 }
