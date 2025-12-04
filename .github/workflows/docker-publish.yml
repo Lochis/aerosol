@@ -105,8 +105,7 @@ jobs:
           propertyPath: '$.spec.template.spec.containers[0].image'
           value: 'ghcr.io/lochis/aerosol:sha-${{ steps.sha.outputs.sha_short }}'
           commitChange: true
-          commitMessage: 'chore: update aerosol to sha-${{ steps.sha.outputs.sha_short }}'
-          updateSameVersion: true  # Only commit if changed
+          message: 'chore: update aerosol to sha-${{ steps.sha.outputs.sha_short }}'
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
