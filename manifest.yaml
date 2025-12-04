@@ -19,7 +19,7 @@ spec:
         - name: reg-credentials-ghcr
       containers:
         - name: aerosol-server
-          image: ghcr.io/lochis/aerosol:sha-<dynamic>
+          image: ghcr.io/lochis/aerosol:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
