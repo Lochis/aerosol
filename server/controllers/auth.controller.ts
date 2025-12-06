@@ -10,7 +10,7 @@ import config from '../config/config.ts';
 export async function login(req: JWTRequest, res: Response) {
     console.log("Login request received:", req.body);
     try {
-        let user = await User.findOne({ "email": req.body.email })
+        let user = await User.findOne({ "email": req.body.email }).select("+passwordHash")
         if (!user) {
             return res.status(400).json({
                 "status": "error",
