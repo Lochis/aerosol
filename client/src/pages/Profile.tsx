@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../lib/auth";
+import PostFeed from "../components/PostFeed";
 import { useToast } from "../components/Toast";
 import type { User } from "../types/user.types";
 import { useNavigate, useParams } from "react-router";
@@ -113,6 +114,8 @@ export default function Profile() {
                 {/* TODO: add confirmation dialog */}
                 <button className="btn btn-warning w-full lg:max-w-1/6" onClick={deleteUserAccount}>Delete Account</button>
             </div>
+
+            {profile?._id && <PostFeed userId={profile._id} />}
         </div>
     );
 }
