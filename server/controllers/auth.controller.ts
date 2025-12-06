@@ -21,19 +21,14 @@ export async function login(req: JWTRequest, res: Response) {
             });
         }
 
-        // call user's authenticate method if available
-        const authFn = (user as any).authenticate;
-        if (typeof authFn === "function") {
-            // use call to preserve method's this context - Mongoose instance methods
-            if (!authFn.call(user, req.body.password)) {
-                return res.status(401).json({
-                    "status": "error",
-                    "error": {
-                        "code": "BAD_PASSWORD",
-                        "message": "Email and password don't match."
-                    }
-                });
-            }
+        if (!await Bun.password.verify(req.body.password, user.passwordHash)) {
+            return res.status(401).json({
+                "status": "error",
+                "error": {
+                    "code": "BAD_PASSWORD",
+                    "message": "Email and password don't match."
+                }
+            });
         }
 
         return authorizeUser(res, user._id);

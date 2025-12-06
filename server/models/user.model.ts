@@ -62,9 +62,10 @@ UserSchema.path('passwordHash').validate(function (this: any) {
 }, undefined);
 
 UserSchema.methods = {
-  authenticate: function (plainText: string): boolean {
-    if (!this.passwordHash) return false;
-    return Bun.password.verifySync(plainText, this.passwordHash);
-  },
+  // Handled in auth.controller.ts
+  // authenticate: function (plainText: string): boolean {
+  //   if (!this.passwordHash) return false;
+  //   return Bun.password.verifySync(plainText, this.passwordHash);
+  // },
 }
 export default mongoose.model('User', UserSchema);
