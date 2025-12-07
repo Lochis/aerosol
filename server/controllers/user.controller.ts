@@ -91,7 +91,6 @@ const userByTag = async (req: UserRequest, res: Response, next: NextFunction, ta
 }
 const read = (req: UserRequest, res: Response) => {
   console.log("Read request for user:", req.profile.tag);
-  req.profile.passwordHash = undefined
   req.profile.email = undefined
   //console.log("Read user:", req.profile);
   return res.json(req.profile)
