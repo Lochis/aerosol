@@ -19,7 +19,7 @@ export default function Auth() {
 
             <div className="tabs tabs-box">
 
-                <input type="radio" name="auth_tabs" className="tab" aria-label="Login" checked={activeTab === "login"} onChange={() => setActiveTab("login")}/>
+                <input data-testid="login-tab" type="radio" name="auth_tabs" className="tab" aria-label="Login" checked={activeTab === "login"} onChange={() => setActiveTab("login")}/>
                 <div className="tab-content w-full">
                     {/*Login Form*/}
                     <Login showPassword={showPassword} handleShowPassword={handleShowPassword} />

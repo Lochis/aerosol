@@ -54,6 +54,7 @@ export default function Settings() {
           <button
             data-theme={theme}
             data-set-theme={theme}
+            data-testid={`${theme}-theme`}
             data-act-class="ACTIVECLASS"
             className={`btn ${
               currentTheme === theme ? "btn-outline border-red-500" : ""
