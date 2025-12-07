@@ -6,7 +6,7 @@ import TrashIcon from "./icons/TrashIcon";
 import DOMPurify from "dompurify";
 import MarkdownIt from "markdown-it";
 import { fromHighlighter } from "@shikijs/markdown-it";
-import { bundledLanguages, bundledThemes, createHighlighter } from "../lib/shiki.bundle";
+import { bundledLanguages, bundledThemes, createHighlighter } from "shiki/bundle/web";
 import type { Post as PostType } from "../types/post.types";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";

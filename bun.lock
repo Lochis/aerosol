@@ -37,12 +37,7 @@
       "devDependencies": {
         "@eslint/js": "^9.39.1",
         "@happy-dom/global-registrator": "^20.0.11",
-        "@shikijs/core": "^3.19.0",
-        "@shikijs/engine-javascript": "^3.19.0",
-        "@shikijs/langs-precompiled": "^3.19.0",
         "@shikijs/markdown-it": "^3.19.0",
-        "@shikijs/themes": "^3.19.0",
-        "@shikijs/types": "^3.19.0",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.0",
         "@types/bun": "^1.3.3",
@@ -212,8 +207,6 @@
     "@shikijs/engine-oniguruma": ["@shikijs/engine-oniguruma@3.19.0", "", { "dependencies": { "@shikijs/types": "3.19.0", "@shikijs/vscode-textmate": "^10.0.2" } }, "sha512-1hRxtYIJfJSZeM5ivbUXv9hcJP3PWRo5prG/V2sWwiubUKTa+7P62d2qxCW8jiVFX4pgRHhnHNp+qeR7Xl+6kg=="],
 
     "@shikijs/langs": ["@shikijs/langs@3.19.0", "", { "dependencies": { "@shikijs/types": "3.19.0" } }, "sha512-dBMFzzg1QiXqCVQ5ONc0z2ebyoi5BKz+MtfByLm0o5/nbUu3Iz8uaTCa5uzGiscQKm7lVShfZHU1+OG3t5hgwg=="],
-
-    "@shikijs/langs-precompiled": ["@shikijs/langs-precompiled@3.19.0", "", { "dependencies": { "@shikijs/types": "3.19.0", "oniguruma-to-es": "^4.3.4" } }, "sha512-aGrlICbUBOK2/HeG6lTUo+wQOvbw0JGUx+qhQLMcZiKTmJzgwLXCsX3rWHFH6gpL2EA/LztpvDwSUpDwwiIo5Q=="],
 
     "@shikijs/markdown-it": ["@shikijs/markdown-it@3.19.0", "", { "dependencies": { "markdown-it": "^14.1.0", "shiki": "3.19.0" }, "peerDependencies": { "markdown-it-async": "^2.2.0" }, "optionalPeers": ["markdown-it-async"] }, "sha512-T9Lt3pPZoK5uu7t2/jQ6OzhwZ9FPBtZhHKSk62IdPaJkj2gVPeRWSJb825dpliSFvURp4JQvcInBkrJZYmhynQ=="],
 
