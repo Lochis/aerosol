@@ -1,5 +1,4 @@
 # Aerosol
-For vercel prod 2
 
 ## Usage
 
