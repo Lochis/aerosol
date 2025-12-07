@@ -7,6 +7,6 @@
 
     "useDefineForClassFields": true,
   },
-  "include": ["src"],
+  "include": ["src", "test"],
   "exclude": ["cypress.config.ts", "cypress", "node_modules"]
 }
