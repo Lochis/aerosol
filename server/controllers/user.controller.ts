@@ -21,14 +21,7 @@ const me = async (req: JWTRequest, res: Response) => {
     const user = await User.findById(userId).select('_id email name tag avatar_url createdAt');
     console.log("User found for me:", user);
     return res.json({
-      "user": {
-        "id": user?._id,
-        "email": user?.email,
-        "name": user?.name,
-        "tag": user?.tag,
-        "avatar_url": user?.avatar_url,
-        "createdAt": user?.createdAt
-      },
+      "user": user?.toObject(),
     });
   } catch (err) {
     return res.status(401).json({ "code": "INVALID_TOKEN" });

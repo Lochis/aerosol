@@ -37,7 +37,7 @@ export default function Post({
   const canEdit = post.author._id === auth.me._id && !editing;
 
   return (
-    <div className="card bg-base-100 shadow-md border border-base-350 max-w-xl mx-auto mb-4">
+    <div className="card bg-base-100 shadow-md border border-base-350 w-full mx-auto mb-4">
       <div className="card-body p-4">
         {/* User info */}
         <div className="flex items-center gap-3">
