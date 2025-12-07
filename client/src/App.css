@@ -18,3 +18,14 @@
 @utility select {
   @apply rounded-lg;
 }
+
+.markdown-body pre,
+.markdown-body code {
+  white-space: pre-wrap;
+}
+.markdown-body pre {
+   padding-left: 10px;
+   padding-bottom: 10px;
+   padding-top: 10px;
+    border-radius: 8px;
+}

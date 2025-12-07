@@ -4,22 +4,56 @@ import RepostIcon from "./icons/RepostIcon";
 import HeartIcon from "./icons/HeartIcon";
 import TrashIcon from "./icons/TrashIcon";
 import DOMPurify from "dompurify";
-import MarkdownIt from "markdown-it";
-import Shiki from "@shikijs/markdown-it";
+import type MarkdownIt from "markdown-it";
 import type { Post as PostType } from "../types/post.types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../lib/auth";
 import { useToast } from "./Toast";
 import PreviewPostModal from "./PreviewPostModal";
 
-const md = MarkdownIt({
-  breaks: true,
-  linkify: true,
-});
+//const md = MarkdownIt({
+//  breaks: true,
+//  linkify: true,
+//});
+//const highlighter = await createHighlighter({
+//  themes: Object.keys(bundledThemes),
+//  langs: Object.keys(bundledLanguages),
+//});
+//md.use(fromHighlighter(highlighter, { theme: "tokyo-night" }));
 
-md.use(await Shiki({
-  theme: 'tokyo-night'
-}))
+let mdRendererPromise: Promise<MarkdownIt> | null = null;
+
+async function getMarkdownRenderer(): Promise<MarkdownIt> {
+  if (mdRendererPromise) return mdRendererPromise;
+
+  mdRendererPromise = (async () => {
+    const [
+      { default: MarkdownIt },
+      { fromHighlighter },
+      { createHighlighter, bundledThemes, bundledLanguages },
+    ] = await Promise.all([
+      import("markdown-it"),
+      import("@shikijs/markdown-it"),
+      import("shiki/bundle/web"),
+    ]);
+
+    const md = MarkdownIt({
+      breaks: true,
+      linkify: true,
+    });
+
+    const highlighter = await createHighlighter({
+      themes: Object.keys(bundledThemes),
+      langs: Object.keys(bundledLanguages),
+    });
+
+    md.use(fromHighlighter(highlighter, { theme: "tokyo-night" }));
+
+    return md;
+  })();
+
+  return mdRendererPromise;
+}
 
 export default function Post({
   post,
@@ -81,8 +115,6 @@ export default function Post({
           />
         )}
 
-        
-
         {/* Interaction buttons */}
         <div className="flex justify-between text-sm opacity-70">
           <button className="btn btn-circle btn-ghost" disabled={preview}>
@@ -102,25 +134,36 @@ function Content({ post }: { post: PostType }) {
   const raw = post.content;
   const LONG_THRESHOLD = 300;
   const [expanded, setExpanded] = useState(false);
+  const [renderedHTML, setRenderedHTML] = useState<string | null>(null);
+  const [truncatedHTML, setTruncatedHTML] = useState<string | null>(null);
+
+  useEffect(() => {
+    getMarkdownRenderer().then((md) => {
+      const fullHTML = DOMPurify.sanitize(md.render(raw));
+      setRenderedHTML(fullHTML);
+
+      if (raw.length > LONG_THRESHOLD) {
+        const truncated = DOMPurify.sanitize(
+          md.render(raw.slice(0, LONG_THRESHOLD) + "...")
+        );
+        setTruncatedHTML(truncated);
+      }
+    });
+  }, [raw]);
 
   const canExpand = raw.length > LONG_THRESHOLD;
-  const fullHTML = DOMPurify.sanitize(md.render(raw));
 
   return (
     <div className="mt-2">
       {canExpand && !expanded ? (
         <div
-          className="prose prose-sm max-w-none"
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(
-              md.render(raw.slice(0, LONG_THRESHOLD) + "...")
-            ),
-          }}
+          className="prose prose-sm max-w-none markdown-body"
+          dangerouslySetInnerHTML={{ __html: truncatedHTML || "" }}
         />
       ) : (
         <div
-          className="prose prose-sm max-w-none"
-          dangerouslySetInnerHTML={{ __html: fullHTML }}
+          className="prose prose-sm max-w-none markdown-body"
+          dangerouslySetInnerHTML={{ __html: renderedHTML || "" }}
         />
       )}
 
@@ -194,47 +237,57 @@ function EditContent({
       />
 
       <div className="flex justify-between mt-2">
-        <PreviewPostModal postContent={content} modalID={`edit-preview-post-modal`} />
+        <PreviewPostModal
+          postContent={content}
+          modalID={`edit-preview-post-modal`}
+        />
         <button
           className="btn btn-soft btn-sm justify-self-start"
           onClick={() => {
-            const previewDialog = document.getElementById(`edit-preview-post-modal`) as HTMLDialogElement | null;
+            const previewDialog = document.getElementById(
+              `edit-preview-post-modal`
+            ) as HTMLDialogElement | null;
             previewDialog?.showModal();
           }}
         >
           Preview
         </button>
-      
-      <div className="flex gap-2 justify-end">
-        
-        <button
-          className="btn btn-circle btn-ghost btn-sm opacity-70"
-          onClick={handleDelete}
-          disabled={pending}
-        >
-          <TrashIcon />
-        </button>
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={handleSave}
-          disabled={!canSave}
-        >
-          Save
-        </button>
-        <button
-          className="btn btn-outline btn-sm"
-          onClick={onExit}
-          disabled={pending}
-        >
-          Cancel
-        </button>
-      </div>
+
+        <div className="flex gap-2 justify-end">
+          <button
+            className="btn btn-circle btn-ghost btn-sm opacity-70"
+            onClick={handleDelete}
+            disabled={pending}
+          >
+            <TrashIcon />
+          </button>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={handleSave}
+            disabled={!canSave}
+          >
+            Save
+          </button>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={onExit}
+            disabled={pending}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
-function LikePost({ post , preview = false}: { post: PostType ,preview?: boolean }) {
+function LikePost({
+  post,
+  preview = false,
+}: {
+  post: PostType;
+  preview?: boolean;
+}) {
   const toast = useToast();
   const auth = useAuth();
   const [likes, setLikes] = useState(post.likes ?? 0);
