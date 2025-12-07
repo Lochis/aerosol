@@ -13,6 +13,10 @@ export default function Profile() {
     const toast = useToast();
     const auth = useAuth();
 
+    const deleteConfirmationModal = document.getElementById(
+    "delete-confirmation-modal"
+  ) as HTMLDialogElement | null;
+
     useEffect(() => {
         async function fetchProfile() {
             try {
@@ -87,9 +91,14 @@ export default function Profile() {
         }
     }
 
+    function onDeleteAttempt () {
+        deleteConfirmationModal?.showModal();
+    }
+
     return (
-        <div className="container mx-auto max-w-4xl">
-            <h1 className="text-3xl font-bold my-4">@{profile.tag}</h1>
+        <div className="mx-auto max-w-7xl flex flex-row gap-4 ">
+            <div className="flex-1">
+            <h1 className="text-3xl font-bold my-4 text-secondary">@{profile.tag}</h1>
             <form id="profileForm" className="flex flex-col gap-4 w-full max-w-md">
                 <label className="input">
                     <span className="label">@</span>
@@ -109,13 +118,33 @@ export default function Profile() {
                 </label>
             </form>
 
-            <div hidden={!isUserProfile} className="flex flex-col md:flex-row md:justify-between mt-12 gap-4">
-                <button className="btn btn-success w-full lg:max-w-1/6" onClick={updateUserProfile}>Save Changes</button>
+            <div hidden={!isUserProfile} className="flex flex-col gap-4 mt-4 max-w-md">
+                <button className="btn btn-success max-w-xs" onClick={updateUserProfile}>Save Changes</button>
                 {/* TODO: add confirmation dialog */}
-                <button className="btn btn-warning w-full lg:max-w-1/6" onClick={deleteUserAccount}>Delete Account</button>
+                <button className="btn btn-soft btn-warning max-w-xs" onClick={onDeleteAttempt}>Delete Account</button>
             </div>
-
-            {profile?._id && <PostFeed userId={profile._id} />}
+            <dialog className="modal" id="delete-confirmation-modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg">Are you sure you want to delete your account?</h3>
+                    <p className="py-4">This action cannot be undone.</p>
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => {
+                            const modal = document.getElementById("delete-confirmation-modal") as HTMLDialogElement;
+                            modal.close();
+                        }}>Cancel</button>
+                        <button className="btn btn-error" onClick={deleteUserAccount}>Delete</button>
+                    </div>
+                </div>
+            </dialog>
+            </div>
+            <div className="flex flex-1 flex-col w-full">
+                <h1 className="text-3xl font-bold mx-auto my-2 text-secondary">{isUserProfile ? "Your Posts" : profile.tag + "'s Posts"}</h1>
+                {profile._id && <PostFeed key={profile._id} userId={profile._id} />}
+            </div>
+            <div className="flex-1">
+                {/* empty for spacing */}
+            </div>
+            
         </div>
     );
 }

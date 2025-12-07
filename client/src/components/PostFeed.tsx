@@ -4,19 +4,17 @@ import { useAuth } from "../lib/auth";
 import { useToast } from "./Toast";
 import type { Post as PostType } from "../types/post.types";
 import PreviewPostModal from "./PreviewPostModal";
+import PostSkeleton from "./PostSkeleton";
 
 type PostQuery = {
   before?: Date;
 };
 
-export default function PostFeed({
-  userId,
-}: {
-  userId?: string | null;
-}) {
+export default function PostFeed({ userId }: { userId?: string | null }) {
   const [posts, setPosts] = useState<PostType[]>([]);
   const toast = useToast();
   const auth = useAuth();
+  const [loading, setLoading] = useState(false);
 
   async function getPosts({
     params,
@@ -27,12 +25,15 @@ export default function PostFeed({
   }) {
     const url = userId ? `/posts/user/${userId}` : "/posts";
     try {
+      setLoading(true);
       const response = await auth.api.get(url, { params, signal });
       console.log("Posts fetched successfully:", response.data);
       setPosts(response.data);
     } catch (error) {
       if (error?.name === "CanceledError") return;
       toast.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -57,17 +58,25 @@ export default function PostFeed({
   }
 
   return (
-    <div className="justify-center flex flex-col max-w-xl mx-auto">
-      { !userId && <CreatePostInput createPost={createPost} />}
+    <div className="justify-center flex flex-col min-w-xl max-w-xl w-full mx-auto">
+      {!userId && <CreatePostInput createPost={createPost} />}
       <div className="py-2">
-        {posts.map((post) => (
-          <Post
-            key={post._id}
-            post={post}
-            onDelete={handlePostDelete}
-            onEdit={handlePostEdit}
-          />
-        ))}
+        {loading ? (
+          <div className="flex flex-col gap-4">
+          {[1,2,3,4,5].map(() => <PostSkeleton />)}
+          </div>
+        ) : (
+          <>
+            {posts.map((post) => (
+              <Post
+                key={post._id}
+                post={post}
+                onDelete={handlePostDelete}
+                onEdit={handlePostEdit}
+              />
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
@@ -131,5 +140,5 @@ function CreatePostInput({
         </button>
       </div>
     </>
-  )
+  );
 }
