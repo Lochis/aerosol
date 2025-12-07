@@ -5,7 +5,8 @@ import HeartIcon from "./icons/HeartIcon";
 import TrashIcon from "./icons/TrashIcon";
 import DOMPurify from "dompurify";
 import MarkdownIt from "markdown-it";
-import Shiki from "@shikijs/markdown-it";
+import { fromHighlighter } from "@shikijs/markdown-it";
+import { bundledLanguages, bundledThemes, createHighlighter } from "../lib/shiki.bundle";
 import type { Post as PostType } from "../types/post.types";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";
@@ -16,10 +17,11 @@ const md = MarkdownIt({
   breaks: true,
   linkify: true,
 });
-
-md.use(await Shiki({
-  theme: 'tokyo-night'
-}))
+const highlighter = await createHighlighter({
+  themes: Object.keys(bundledThemes),
+  langs: Object.keys(bundledLanguages),
+});
+md.use(fromHighlighter(highlighter, { theme: "tokyo-night" }));
 
 export default function Post({
   post,
