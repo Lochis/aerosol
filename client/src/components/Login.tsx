@@ -38,19 +38,19 @@ export default function Login({ handleShowPassword, showPassword }: AuthProps) {
             <form className="flex flex-col gap-4 items-center" onSubmit={handleLogin}>
                 <fieldset className="fieldset bg-base-200 border-base-800 p-2 w-full flex flex-col items-center justify-center">
                     <label className="input validator">
-                        <input name="email" type="email" placeholder="Email" required />
+                        <input data-testid="login-email" name="email" type="email" placeholder="Email" required />
                     </label>
                     <div className="validator-hint hidden">Enter valid email address</div>
 
                     <div className="join max-w-xs lg:w-full">
                         <label className="input join-item">
-                            <input name="password" id="login-password" type={showPassword ? "text" : "password"} placeholder="password" required />
+                            <input data-testid="login-password" name="password" id="login-password" type={showPassword ? "text" : "password"} placeholder="password" required />
                         </label>
                         <button className="btn btn-neutral join-item" onClick={handleShowPassword}>Show</button>
                     </div>
 
                 </fieldset>
-                <button type="submit" className="btn btn-primary w-full max-w-md">Login</button>
+                <button data-testid="login-submit" type="submit" className="btn btn-primary w-full max-w-md">Login</button>
             </form>
         </>
     )

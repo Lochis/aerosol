@@ -27,6 +27,7 @@ export default function NavBar() {
 
         <div className="dropdown dropdown-bottom dropdown-end relative">
           <div
+            data-testid="avatar-button"
             tabIndex={0}
             role="button"
             className="btn btn-ghost btn-circle avatar"
@@ -48,7 +49,7 @@ export default function NavBar() {
               <Link to="/profile">Profile</Link>
             </li>
             <li>
-              <Link to="/settings">Settings</Link>
+              <Link data-testid="settings-link" to="/settings">Settings</Link>
             </li>
             <li>
               <a onClick={handleLogout}>Logout</a>

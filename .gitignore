@@ -1,5 +1,9 @@
 manifest.yaml
 
+client/cypress/screenshots/*
+client/cypress/videos/*
+client/cypress/fixtures/example.json
+
 .vercel
 client/.vercel/*
 server/.vercel/*
