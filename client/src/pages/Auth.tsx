@@ -7,7 +7,7 @@ export default function Auth() {
     const [showPassword, setShowPassword] = useState(false);
     const [activeTab, setActiveTab] = useState("signup");
 
-    function handleShowPassword(event: React.MouseEvent<HTMLButtonElement>) {
+    function handleShowPassword(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         setShowPassword(!showPassword);
     }

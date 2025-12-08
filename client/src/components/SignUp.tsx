@@ -2,7 +2,7 @@ import { useAuth } from "../lib/auth";
 import { useToast } from "./Toast";
 
 interface AuthProps {
-    handleShowPassword: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    handleShowPassword: (event: React.MouseEvent<HTMLElement>) => void;
     showPassword: boolean;
     setActiveTab: (tab: string) => void;
 }
@@ -51,7 +51,7 @@ export default function SignUp({ handleShowPassword, showPassword, setActiveTab 
                         <label className="input join-item">
                             <input id="signup-password" name="password" type={showPassword ? "text" : "password"} placeholder="password" required />
                         </label>
-                        <button className="btn btn-neutral join-item" onClick={handleShowPassword}>Show</button>
+                        <div className="btn btn-neutral join-item" onClick={handleShowPassword}>Show</div>
                     </div>
 
                 </fieldset>
