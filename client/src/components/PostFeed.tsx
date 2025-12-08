@@ -63,7 +63,7 @@ export default function PostFeed({ userId }: { userId?: string | null }) {
       <div className="py-2">
         {loading ? (
           <div className="flex flex-col gap-4">
-          {[1,2,3,4,5].map(() => <PostSkeleton />)}
+            {[1, 2, 3, 4, 5].map(() => <PostSkeleton />)}
           </div>
         ) : (
           <>
