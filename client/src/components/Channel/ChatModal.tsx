@@ -47,13 +47,13 @@ export default function ChatModal({
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl font-bold">{channelName}</div>
 
-          <div className="dropdown dropdown-end mr-5">
-            <div tabIndex={0} role="button" className="btn m-1">
+          <div className="dropdown mr-5">
+            <div tabIndex={0} role="button" className="btn m-1" hidden={activeChat?.type === "dm"}>
               Options
             </div>
             <ul
               tabIndex={-1}
-              className="dropdown-content menu p-2 gap-2 shadow bg-base-100 rounded-box w-32"
+              className="dropdown-content menu p-2 space-y-2 shadow bg-base-100 rounded-box w-32"
             >
               <li
                 role="button"
@@ -63,7 +63,7 @@ export default function ChatModal({
               >
                 {showMembers ? "Hide Members" : "Show Members"}
               </li>
-              {isUserOwner && (
+              {isUserOwner && activeChat?.type === "channel" && (
                 <li
                   role="button"
                   className="btn btn-sm btn-error"
