@@ -1,5 +1,4 @@
 # Aerosol
-For prod
 
 ## Usage
 
