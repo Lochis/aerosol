@@ -1,5 +1,7 @@
 # Aerosol
 
+A social media platform with real-time chatting, markdown rendering, and syntax highlighting.
+
 ## Usage
 
 1. Install Bun: https://bun.sh/
